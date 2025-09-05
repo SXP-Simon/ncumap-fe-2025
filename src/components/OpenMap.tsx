@@ -61,6 +61,7 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
   const currentZoom = useRef(3);
   const currentCenter = useRef([centerX, centerY]);
   const categories = useRef(['全部', '活动']);
+  // 用 ref 保存当前分类索引（避免频繁重渲染），若需要响应式更新再添加 state
   const currentCategory = useRef(0);
   const marks = useRef<any>(null);
   const geoLocationMark = useRef<number[]>([]);
@@ -125,7 +126,11 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
         },
         (error) => {
           console.error('定位失败:', error);
-          mincu.toast.error('定位失败');
+          // mincu.toast 可能不包含 error 方法，使用 fail 如果可用，否则回退到 info
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          if (mincu?.toast?.fail) mincu.toast.fail('定位失败');
+          else mincu.toast.info('定位失败');
         }
       );
     }
@@ -264,7 +269,7 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
       controls: []
     });
 
-    // 添加点击交互
+  // 添加点击交互
     const selectInteraction = new Select({
       condition: click,
       filter: (feature) => {
@@ -276,7 +281,11 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
       const selectedFeatures = event.selected;
       if (selectedFeatures.length > 0) {
         const feature = selectedFeatures[0];
-        const coordinates = feature.getGeometry()?.getCoordinates();
+  const geometry = feature.getGeometry();
+  // geometry 可能是多种类型，断言为 Point 以调用 getCoordinates
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const coordinates = geometry?.getCoordinates ? geometry.getCoordinates() : undefined;
         if (coordinates && viewRef.current) {
           viewRef.current.setCenter(coordinates);
         }
@@ -286,19 +295,22 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
       }
     });
 
-    map.addInteraction(selectInteraction);
+  map.addInteraction(selectInteraction);
 
-    // 监听视图变化
-    view.on('change:resolution', () => {
+    // 监听视图变化（保存 handler 引用便于卸载）
+    const onResolutionChange = () => {
       currentZoom.current = view.getZoom() || 3;
       updateMarkers();
-    });
+    };
 
-    view.on('change:center', () => {
+    const onCenterChange = () => {
       currentCenter.current = view.getCenter() || [centerX, centerY];
-    });
+    };
 
-    mapInstanceRef.current = map;
+    view.on('change:resolution', onResolutionChange);
+    view.on('change:center', onCenterChange);
+
+  mapInstanceRef.current = map;
 
     // 初始化数据
     const initializeData = async () => {
@@ -316,13 +328,30 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
     initializeData();
 
     return () => {
-      map.setTarget(undefined);
+      // 清理交互与事件监听，销毁 map
+      try {
+        view.un('change:resolution', onResolutionChange);
+        view.un('change:center', onCenterChange);
+      } catch (e) {
+        // ignore
+      }
+
+      try {
+        map.removeInteraction(selectInteraction);
+      } catch (e) {
+        // ignore
+      }
+
+      if (map) {
+        map.setTarget(undefined);
+      }
+
+      vectorSourceRef.current = null;
+      mapInstanceRef.current = null;
+      viewRef.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    updateMarkers();
-  }, [currentCategory.current]);
+  // 注意：currentCategory 使用 ref 存储，若需要在分类变化时自动更新视图，请把 currentCategory 改为 state。
 
   useImperativeHandle(ref, () => ({
     currentZoom: currentZoom.current,
