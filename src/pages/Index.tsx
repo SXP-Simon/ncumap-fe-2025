@@ -131,6 +131,54 @@ const Index: React.FC = () => {
     return map.marks[map.categories[map.currentCategory]] || [];
   };
 
+  const getActivitiesList = () => {
+    // 尝试使用后端返回的 activitiesData（可能是数组或对象），否则从 map.marks 中构建
+    const list: any[] = [];
+
+    if (activitiesData) {
+      // 如果是数组，每项可能包含 location_id 或 locationId 或 target
+      if (Array.isArray(activitiesData)) {
+        activitiesData.forEach((it: any) => {
+          list.push({
+            title: it.title || it.name || it.description || it.content || String(it),
+            location_id: it.location_id ?? it.locationId ?? it.location ?? null,
+            raw: it
+          });
+        });
+        return list;
+      }
+
+      // 如果是一个对象并且包含 activities 字段
+      if (activitiesData.activities && Array.isArray(activitiesData.activities)) {
+        activitiesData.activities.forEach((it: any) => {
+          list.push({ title: it.title || it, location_id: it.location_id ?? null, raw: it });
+        });
+        return list;
+      }
+    }
+
+    // 回退：从地图数据中提取每个地点的 activities 字段
+    if (map.marks) {
+      try {
+        const keys = Object.keys(map.marks);
+        keys.forEach((k) => {
+          const arr = map.marks[k] || [];
+          arr.forEach((mark: any) => {
+            if (mark.activities && Array.isArray(mark.activities) && mark.activities.length > 0) {
+              mark.activities.forEach((act: any) => {
+                list.push({ title: act, location_id: mark.location_id ?? mark.id ?? null, name: mark.name, raw: mark });
+              });
+            }
+          });
+        });
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    return list;
+  };
+
   return (
     <div className="index-container">
       {/* 上方选项卡 */}
@@ -250,6 +298,44 @@ const Index: React.FC = () => {
           >
             详情
           </Button>
+        </div>
+      </Drawer>
+
+      {/* 活动列表抽屉 */}
+      <Drawer
+        title="活动"
+        placement="bottom"
+        height="50vh"
+        open={isActivitiesSheetShow}
+        onClose={() => setIsActivitiesSheetShow(false)}
+        className="bottom-sheet"
+      >
+        <List
+          dataSource={getActivitiesList()}
+          renderItem={(item: any) => (
+            <List.Item
+              className={`list-item`}
+              onClick={() => {
+                setIsActivitiesSheetShow(false);
+                // 优先使用 location_id 跳转
+                if (item.location_id) {
+                  navigate(`/${item.location_id}`);
+                } else if (item.raw && item.raw.location_id) {
+                  navigate(`/${item.raw.location_id}`);
+                } else {
+                  // 如果没有 location 信息，则不跳转，仅显示内容
+                }
+              }}
+            >
+              <List.Item.Meta
+                title={<div className="list-item-title"><span>{item.title}</span></div>}
+                description={item.name || (item.raw && item.raw.description) || ''}
+              />
+            </List.Item>
+          )}
+        />
+        <div className="drawer-actions">
+          <Button onClick={() => setIsActivitiesSheetShow(false)}>取消</Button>
         </div>
       </Drawer>
 
