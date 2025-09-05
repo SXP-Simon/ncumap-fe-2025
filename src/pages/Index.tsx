@@ -31,6 +31,8 @@ const Index: React.FC = () => {
   const [bottomSheetSelected, setBottomSheetSelected] = useState(-1);
   const [manualData, setManualData] = useState<any>(null);
   const [activitiesData, setActivitiesData] = useState<any>(null);
+  const [manualGroupIndex, setManualGroupIndex] = useState<number>(-1);
+  const [manualSelectedIndex, setManualSelectedIndex] = useState<number>(-1);
 
   const fetcher = axios.create();
   mincu.useAxiosInterceptors(fetcher);
@@ -106,10 +108,26 @@ const Index: React.FC = () => {
   };
 
   const manualRedirect = () => {
-    if (manualData && bottomSheetSelected >= 0) {
+    if (manualData && manualGroupIndex >= 0 && manualSelectedIndex >= 0) {
       const categoryKeys = Object.keys(manualData);
-      const current = manualData[categoryKeys[0]][bottomSheetSelected]; // 简化处理
-      navigate(`/${current.location_id}`);
+      const key = categoryKeys[manualGroupIndex];
+      const current = manualData[key] && manualData[key][manualSelectedIndex];
+      if (current && (current.location_id || current.locationId || current.id)) {
+        navigate(`/${current.location_id ?? current.locationId ?? current.id}`);
+      }
+    }
+  };
+
+  const manualSelect = (itemIndex: number, groupIndex: number) => {
+    setManualSelectedIndex(itemIndex);
+    setManualGroupIndex(groupIndex);
+    const keys = Object.keys(manualData || {});
+    const key = keys[groupIndex];
+    const current = manualData && manualData[key] && manualData[key][itemIndex];
+    if (mapRef.current && current) {
+      if (current.coordinates) mapRef.current.viewTo(current.coordinates);
+      const markZoom = current.priority ?? 3;
+      mapRef.current.zoomTo(3 > markZoom ? 3 : markZoom);
     }
   };
 
@@ -336,6 +354,50 @@ const Index: React.FC = () => {
         />
         <div className="drawer-actions">
           <Button onClick={() => setIsActivitiesSheetShow(false)}>取消</Button>
+        </div>
+      </Drawer>
+
+      {/* 新生手册抽屉 */}
+      <Drawer
+        title="手册"
+        placement="bottom"
+        height="50vh"
+        open={isManualShow}
+        onClose={() => setIsManualShow(false)}
+        className="bottom-sheet"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div style={{ overflow: 'auto', flex: 1 }}>
+            {manualData ? (
+              <div>
+                {Object.keys(manualData).map((groupKey, gi) => (
+                  <div key={groupKey} style={{ padding: '8px 0' }}>
+                    <div style={{ padding: '0 16px', color: '#476491', fontSize: 13 }}>{groupKey}</div>
+                    <List
+                      dataSource={manualData[groupKey]}
+                      renderItem={(item: any, idx: number) => (
+                        <List.Item
+                          className={`list-item ${manualGroupIndex === gi && manualSelectedIndex === idx ? 'selected' : ''}`}
+                          onClick={() => manualSelect(idx, gi)}
+                        >
+                          <List.Item.Meta
+                            title={<span style={{ fontSize: 15, color: 'black' }}>{item.name}</span>}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ padding: 16 }}>加载中</div>
+            )}
+          </div>
+
+          <div style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
+            <Button onClick={() => setIsManualShow(false)}>取消</Button>
+            <Button type="primary" disabled={manualSelectedIndex === -1} onClick={manualRedirect}>详情</Button>
+          </div>
         </div>
       </Drawer>
 
