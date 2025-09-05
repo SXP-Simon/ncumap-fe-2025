@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Card, Image, Spin, Alert, Typography } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
-import { useBuildingDetail } from '../hooks/useBuildingDetail';
+import { useBuildingDetail } from '../hooks';
 
 const { Title, Paragraph, Text } = Typography;
 

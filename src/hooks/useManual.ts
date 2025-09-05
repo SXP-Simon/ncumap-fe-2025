@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { OpenMapRef } from '../components/OpenMap';
+import type { ManualData } from './types';
 
-export function useManual(mapRef: React.RefObject<OpenMapRef | null>, manualData: any) {
+export function useManual(mapRef: React.RefObject<OpenMapRef | null>, manualData: ManualData | null) {
   const navigate = useNavigate();
   const [manualGroupIndex, setManualGroupIndex] = useState<number>(-1);
   const [manualSelectedIndex, setManualSelectedIndex] = useState<number>(-1);

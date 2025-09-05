@@ -1,101 +1,79 @@
+import { useEffect } from 'react';
 import { useMapState } from './useMapState';
 import { useFetchData } from './useFetchData';
 import { useUIState } from './useUIState';
 import { useManual } from './useManual';
-import { useActivities } from './useActivities';
-import { mincu } from 'mincu-vanilla';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useMapActions } from './useMapActions';
+import { useUIActions } from './useUIActions';
+import { useNavigationActions } from './useNavigationActions';
+import { useDataActions } from './useDataActions';
+import type { 
+  PageLogicActions, 
+  PageLogicState, 
+  PageLogicParams 
+} from './types';
 import type { OpenMapRef } from '../components/OpenMap';
 
+/**
+ * 页面逻辑组合 hook
+ * 将所有子 hooks 组合在一起，提供统一的接口
+ * 
+ * 这个 hook 的职责：
+ * 1. 组合各个功能域的 hooks
+ * 2. 处理跨域的数据依赖和同步
+ * 3. 提供统一的 API 给组件使用
+ */
 export function usePageLogic(mapRef: React.RefObject<OpenMapRef | null>) {
-  const { map, setMap, updateFromRef, getCurrentMarks } = useMapState(mapRef);
+  // 基础数据层
+  const { map, updateFromRef, setMap, getCurrentMarks } = useMapState(mapRef);
   const { manualData, activitiesData } = useFetchData();
   const ui = useUIState();
   const manual = useManual(mapRef, manualData);
-  const activitiesList = useActivities(activitiesData, map.marks);
-  const navigate = useNavigate();
 
-  // 添加 useEffect 来同步地图数据
+  // 参数对象
+  const params: PageLogicParams = { mapRef };
+
+  // 功能域 hooks
+  const mapActions = useMapActions(setMap, updateFromRef, getCurrentMarks);
+  const uiActions = useUIActions(params, ui, map, setMap);
+  const navigationActions = useNavigationActions(params, manualData);
+  const dataActions = useDataActions(activitiesData, map.marks);
+
+  // 跨域数据同步
   useEffect(() => {
     updateFromRef();
   }, [manualData, activitiesData, updateFromRef]);
 
-  // expose previous API shape (delegating to smaller hooks)
-  return {
+  // 组织状态
+  const state: PageLogicState = {
     map,
-    setMap,
     location: { x: 115.804362, y: 28.663298 },
-    isCategoriesSheetShow: ui.isCategoriesSheetShow,
-    setIsCategoriesSheetShow: ui.setIsCategoriesSheetShow,
-    isManualShow: ui.isManualShow,
-    setIsManualShow: ui.setIsManualShow,
-    isActivitiesSheetShow: ui.isActivitiesSheetShow,
-    setIsActivitiesSheetShow: ui.setIsActivitiesSheetShow,
-    schoolCarDialog: ui.schoolCarDialog,
-    setSchoolCarDialog: ui.setSchoolCarDialog,
-    schoolCarNumber: ui.schoolCarNumber,
-    setSchoolCarNumber: ui.setSchoolCarNumber,
-    bottomSheetSelected: ui.bottomSheetSelected,
-    setBottomSheetSelected: ui.setBottomSheetSelected,
-    manualData,
-    activitiesData,
-    manualGroupIndex: manual.manualGroupIndex,
-    manualSelectedIndex: manual.manualSelectedIndex,
-    showBottomSheet: (currentCategory: string) => {
-      const categoryIndex = parseInt(currentCategory);
-      ui.setSchoolCarDialog(false);
-      ui.setBottomSheetSelected(-1);
-      ui.setIsManualShow(false);
+    ui: {
+      isCategoriesSheetShow: ui.isCategoriesSheetShow,
+      isManualShow: ui.isManualShow,
+      isActivitiesSheetShow: ui.isActivitiesSheetShow,
+      schoolCarDialog: ui.schoolCarDialog,
+      schoolCarNumber: ui.schoolCarNumber,
+      bottomSheetSelected: ui.bottomSheetSelected,
+    },
+    data: {
+      manualData,
+      activitiesData,
+      manualGroupIndex: manual.manualGroupIndex,
+      manualSelectedIndex: manual.manualSelectedIndex,
+    },
+  };
 
-      if (categoryIndex === 0 || categoryIndex === 1) {
-        ui.setIsCategoriesSheetShow(false);
-        ui.setIsActivitiesSheetShow(false);
-        if (categoryIndex === 1) ui.setIsActivitiesSheetShow(true);
-      } else {
-        ui.setIsCategoriesSheetShow(true);
-        ui.setIsActivitiesSheetShow(false);
-      }
+  // 组合动作
+  const actions: PageLogicActions = {
+    mapActions,
+    uiActions,
+    navigationActions,
+    dataActions,
+  };
 
-      setMap(prev => ({ ...prev, currentCategory: categoryIndex }));
-    },
-    showManual: () => {
-      ui.setBottomSheetSelected(-1);
-      if (mapRef.current) mapRef.current.showAllMarks();
-      ui.setIsCategoriesSheetShow(false);
-      ui.setIsManualShow(true);
-    },
-    bottomSheetSelect: (index: number) => {
-      ui.setBottomSheetSelected(index);
-      if (mapRef.current && map.marks) {
-        const selectedMark = map.marks[map.categories[map.currentCategory]][index];
-        mapRef.current.viewTo(selectedMark.coordinates);
-        const markZoom = selectedMark.priority;
-        mapRef.current.zoomTo(3 > markZoom ? 3 : markZoom);
-      }
-    },
-    manualRedirect: manual.manualRedirect,
-    manualSelect: manual.manualSelect,
-    toChatAI: () => {
-      const url = 'https://aiguide.ncuos.com/welcome';
-      try {
-        if (mincu && typeof (mincu as any).openUrl === 'function') {
-          (mincu as any).openUrl(url);
-          return;
-        }
-      } catch (e) {
-        // fallback
-      }
-
-      if (typeof window !== 'undefined' && window.open) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-      }
-    },
-    handleFeatureSelected: (locationId: string) => {
-      navigate(`/${locationId}`);
-    },
-    getCurrentMarks,
-    getActivitiesList: () => activitiesList,
-    updateFromRef,
+  return {
+    ...actions,
+    state,
   };
 }

@@ -11,6 +11,12 @@ import { click } from 'ol/events/condition';
 import { Projection } from 'ol/proj';
 import { mincu } from 'mincu-vanilla';
 import axios from 'axios';
+import type { MapMarks, MapMark } from '../hooks/types';
+
+interface GeolocationPosition {
+  lng: number;
+  lat: number;
+}
 
 interface OpenMapProps {
   x: number;
@@ -23,7 +29,7 @@ export interface OpenMapRef {
   currentCenter: number[];
   categories: string[];
   currentCategory: number;
-  marks: any;
+  marks: MapMarks | null;
   viewTo: (coordinates: number[]) => void;
   zoomTo: (zoom: number) => void;
   backToCenter: () => void;
@@ -63,7 +69,7 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
   const categories = useRef(['全部', '活动']);
   // 用 ref 保存当前分类索引（避免频繁重渲染），若需要响应式更新再添加 state
   const currentCategory = useRef(0);
-  const marks = useRef<any>(null);
+  const marks = useRef<MapMarks | null>(null);
   const geoLocationMark = useRef<number[]>([]);
 
   const fetcher = axios.create();
@@ -98,7 +104,7 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
     return distance([x, y], outterPosition) < outterRadius && distance([x, y], innerPosition) > innerRadius;
   };
 
-  const geoSuccess = (position: any) => {
+  const geoSuccess = (position: GeolocationPosition) => {
     let [centerX, centerY] = convertCoordinates([position.lng, position.lat]);
 
     if (isInSchool([centerX, centerY])) {
@@ -205,8 +211,8 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
       : [categories.current[currentCategory.current]];
 
     categoriesToShow.forEach(category => {
-      if (marks.current[category]) {
-        marks.current[category].forEach((mark: any) => {
+      if (marks.current && marks.current[category]) {
+        marks.current[category].forEach((mark: MapMark) => {
           if (mark.priority <= currentZoom.current) {
             const feature = new Feature({
               geometry: new Point(convertCoordinates(mark.coordinates)),
@@ -316,9 +322,22 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
     const initializeData = async () => {
       try {
         locate();
-        const response = await fetcher.get(baseURL + '/api/v1/campus/marks');
-        marks.current = response.data;
-        categories.current.push(...Object.keys(marks.current));
+        try {
+          // 尝试从 API 获取数据
+          const response = await fetcher.get(baseURL + '/api/v1/campus/marks');
+          marks.current = response.data;
+        } catch (apiError) {
+          console.warn('API failed, using local data:', apiError);
+          // 备用方案：使用本地数据
+          const { fetchLocalData } = await import('../hooks/fetcher');
+          marks.current = await fetchLocalData('/data.json');
+        }
+        
+        if (marks.current) {
+          // 清空并重新填充categories
+          categories.current.length = 0;
+          categories.current.push('全部', '活动', ...Object.keys(marks.current));
+        }
         updateMarkers();
       } catch (err) {
         console.error('Failed to load map data:', err);
