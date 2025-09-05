@@ -132,7 +132,19 @@ const Index: React.FC = () => {
   };
 
   const toChatAI = () => {
-    mincu.openUrl("https://aiguide.ncuos.com/welcome");
+    const url = "https://aiguide.ncuos.com/welcome";
+    try {
+      if (mincu && typeof (mincu as any).openUrl === 'function') {
+        (mincu as any).openUrl(url);
+        return;
+      }
+    } catch (e) {
+      // ignore and fallback to window.open
+    }
+    // Fallback for web: open in new tab
+    if (typeof window !== 'undefined' && window.open) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const handleFeatureSelected = (locationId: string) => {
