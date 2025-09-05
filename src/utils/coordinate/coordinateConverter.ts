@@ -1,156 +1,107 @@
 /**
- * 坐标系转换工具
- * 
- * 支持中国常用坐标系之间的转换：
- * - GCJ02: 国家测绘局坐标系 (火星坐标系)
- * - WGS84: 世界大地测量系统坐标系 (GPS坐标系)
+ * coordinateConverter (清晰命名 + 详细注释)
+ *
+ * 提供将中国常用的 GCJ-02（火星坐标系）转换为 WGS-84（GPS 坐标）的工具。
+ * 本文件侧重于可读性：常量、函数和局部变量使用可理解的全称命名，并添加参数/返回/示例注释。
  */
 
-// 地球椭球体参数常量
-const EARTH_CONSTANTS = {
-  /** 圆周率 */
-  PI: 3.1415926535897932384626,
-  /** 长半轴 (米) */
-  SEMI_MAJOR_AXIS: 6378245.0,
-  /** 第一偏心率的平方 */
-  FIRST_ECCENTRICITY_SQUARED: 0.00669342162296594323,
-} as const;
+/** 表示一个经纬度点 [经度, 纬度]（单位：度） */
+export type CoordinatePoint = [number, number];
 
-/**
- * 坐标转换结果类型
- */
-export type CoordinatePoint = [longitude: number, latitude: number];
+// 常量说明
+// PI: 圆周率
+// semiMajorAxis: 椭球体长半轴（米），常用值 6378245.0 对应于中国测绘使用的基准
+// eccentricitySquared: 第一偏心率的平方
+const PI = Math.PI;
+const semiMajorAxis = 6378245.0;
+const eccentricitySquared = 0.00669342162296594323;
 
 /**
- * 纬度转换计算
- * 
- * 基于克拉索夫斯基椭球体参数进行纬度偏移量计算
- * 
- * @param longitude - 经度
- * @param latitude - 纬度
- * @returns 转换后的纬度偏移量
+ * 计算纬度方向的偏移量（与 transformLat 等价，但命名更语义化）
+ * @param deltaLng 偏移的经度差（通常为 lng - 105.0）
+ * @param deltaLat 偏移的纬度差（通常为 lat - 35.0）
+ * @returns 纬度偏移量（单位：度的近似量，需要进一步按椭球体参数调整）
  */
-function calculateLatitudeTransform(longitude: number, latitude: number): number {
-  const { PI } = EARTH_CONSTANTS;
-  
-  let result = -100.0 + 2.0 * longitude + 3.0 * latitude + 
-               0.2 * latitude * latitude + 0.1 * longitude * latitude + 
-               0.2 * Math.sqrt(Math.abs(longitude));
-               
-  result += (20.0 * Math.sin(6.0 * longitude * PI) + 20.0 * Math.sin(2.0 * longitude * PI)) * 2.0 / 3.0;
-  result += (20.0 * Math.sin(latitude * PI) + 40.0 * Math.sin(latitude / 3.0 * PI)) * 2.0 / 3.0;
-  result += (160.0 * Math.sin(latitude / 12.0 * PI) + 320 * Math.sin(latitude * PI / 30.0)) * 2.0 / 3.0;
-  
-  return result;
+function calculateLatitudeDelta(deltaLng: number, deltaLat: number): number {
+  let value = -100.0 + 2.0 * deltaLng + 3.0 * deltaLat + 0.2 * deltaLat * deltaLat + 0.1 * deltaLng * deltaLat + 0.2 * Math.sqrt(Math.abs(deltaLng));
+  value += (20.0 * Math.sin(6.0 * deltaLng * PI) + 20.0 * Math.sin(2.0 * deltaLng * PI)) * 2.0 / 3.0;
+  value += (20.0 * Math.sin(deltaLat * PI) + 40.0 * Math.sin((deltaLat / 3.0) * PI)) * 2.0 / 3.0;
+  value += (160.0 * Math.sin((deltaLat / 12.0) * PI) + 320.0 * Math.sin((deltaLat * PI) / 30.0)) * 2.0 / 3.0;
+  return value;
 }
 
 /**
- * 经度转换计算
- * 
- * 基于克拉索夫斯基椭球体参数进行经度偏移量计算
- * 
- * @param longitude - 经度
- * @param latitude - 纬度
- * @returns 转换后的经度偏移量
+ * 计算经度方向的偏移量（与 transformLng 等价，但命名更语义化）
+ * @param deltaLng 偏移的经度差（通常为 lng - 105.0）
+ * @param deltaLat 偏移的纬度差（通常为 lat - 35.0）
+ * @returns 经度偏移量（单位：度的近似量，需要进一步按椭球体参数调整）
  */
-function calculateLongitudeTransform(longitude: number, latitude: number): number {
-  const { PI } = EARTH_CONSTANTS;
-  
-  let result = 300.0 + longitude + 2.0 * latitude + 
-               0.1 * longitude * longitude + 0.1 * longitude * latitude + 
-               0.1 * Math.sqrt(Math.abs(longitude));
-               
-  result += (20.0 * Math.sin(6.0 * longitude * PI) + 20.0 * Math.sin(2.0 * longitude * PI)) * 2.0 / 3.0;
-  result += (20.0 * Math.sin(longitude * PI) + 40.0 * Math.sin(longitude / 3.0 * PI)) * 2.0 / 3.0;
-  result += (150.0 * Math.sin(longitude / 12.0 * PI) + 300.0 * Math.sin(longitude / 30.0 * PI)) * 2.0 / 3.0;
-  
-  return result;
+function calculateLongitudeDelta(deltaLng: number, deltaLat: number): number {
+  let value = 300.0 + deltaLng + 2.0 * deltaLat + 0.1 * deltaLng * deltaLng + 0.1 * deltaLng * deltaLat + 0.1 * Math.sqrt(Math.abs(deltaLng));
+  value += (20.0 * Math.sin(6.0 * deltaLng * PI) + 20.0 * Math.sin(2.0 * deltaLng * PI)) * 2.0 / 3.0;
+  value += (20.0 * Math.sin(deltaLng * PI) + 40.0 * Math.sin((deltaLng / 3.0) * PI)) * 2.0 / 3.0;
+  value += (150.0 * Math.sin((deltaLng / 12.0) * PI) + 300.0 * Math.sin((deltaLng / 30.0) * PI)) * 2.0 / 3.0;
+  return value;
 }
 
 /**
- * 将GCJ02坐标系转换为WGS84坐标系
- * 
- * GCJ02是中国国家测绘局制定的地理信息系统的坐标系统，也被称为火星坐标系。
- * 中国大陆所有公开地理数据都需要至少用GCJ02进行加密。
- * 
- * WGS84是世界大地测量系统1984，是为GPS全球定位系统使用而建立的坐标系统。
- * 
- * @param longitude - GCJ02坐标系的经度
- * @param latitude - GCJ02坐标系的纬度
- * @returns [WGS84经度, WGS84纬度]
- * 
+ * 将单点 GCJ-02 坐标转换为 WGS-84 坐标
+ *
+ * 算法说明（简要）：
+ * 1) 先根据相对中国基准点（经度 105，纬度 35）计算经验拟合的纬度/经度偏移量。
+ * 2) 使用椭球体参数（长半轴和第一偏心率平方）将偏移量转换为真实角度偏移。
+ * 3) 原 GCJ-02 坐标减去偏移量即为近似的 WGS-84 坐标。
+ *
+ * @param longitudeGCJ 经度（GCJ-02，单位：度）
+ * @param latitudeGCJ 纬度（GCJ-02，单位：度）
+ * @returns [longitudeWGS84, latitudeWGS84]
+ *
  * @example
- * ```typescript
- * // 转换北京天安门的坐标
- * const [wgs84Lng, wgs84Lat] = convertGcj02ToWgs84(116.397428, 39.90923);
- * console.log(`WGS84坐标: ${wgs84Lng}, ${wgs84Lat}`);
- * ```
+ * const [lng, lat] = coordinateConverter.convertGcj02ToWgs84(116.397428, 39.90923);
  */
-export function convertGcj02ToWgs84(longitude: number, latitude: number): CoordinatePoint {
-  const { PI, SEMI_MAJOR_AXIS, FIRST_ECCENTRICITY_SQUARED } = EARTH_CONSTANTS;
-  
-  // 计算偏移量 (相对于中国大陆中心点 105°E, 35°N)
-  const deltaLatitude = calculateLatitudeTransform(longitude - 105.0, latitude - 35.0);
-  const deltaLongitude = calculateLongitudeTransform(longitude - 105.0, latitude - 35.0);
-  
-  // 将纬度转换为弧度
-  const radianLatitude = latitude / 180.0 * PI;
-  let magic = Math.sin(radianLatitude);
-  magic = 1 - FIRST_ECCENTRICITY_SQUARED * magic * magic;
+function convertGcj02ToWgs84(longitudeGCJ: number, latitudeGCJ: number): CoordinatePoint {
+  // 以 (105, 35) 作为经验基准计算偏移
+  const deltaLatRaw = calculateLatitudeDelta(longitudeGCJ - 105.0, latitudeGCJ - 35.0);
+  const deltaLngRaw = calculateLongitudeDelta(longitudeGCJ - 105.0, latitudeGCJ - 35.0);
+
+  // 纬度转弧度
+  const radianLatitude = (latitudeGCJ / 180.0) * PI;
+
+  // 根据椭球体参数调整偏移
+  let sinLat = Math.sin(radianLatitude);
+  let magic = 1 - eccentricitySquared * sinLat * sinLat; // 临时变量，用于计算曲率
   const sqrtMagic = Math.sqrt(magic);
-  
-  // 计算最终偏移量
-  const latitudeOffset = (deltaLatitude * 180.0) / ((SEMI_MAJOR_AXIS * (1 - FIRST_ECCENTRICITY_SQUARED)) / (magic * sqrtMagic) * PI);
-  const longitudeOffset = (deltaLongitude * 180.0) / (SEMI_MAJOR_AXIS / sqrtMagic * Math.cos(radianLatitude) * PI);
-  
-  // 返回转换后的坐标
-  const wgs84Longitude = longitude - longitudeOffset;
-  const wgs84Latitude = latitude - latitudeOffset;
-  
-  return [wgs84Longitude, wgs84Latitude];
+
+  const latitudeOffset = (deltaLatRaw * 180.0) / ((semiMajorAxis * (1 - eccentricitySquared)) / (magic * sqrtMagic) * PI);
+  const longitudeOffset = (deltaLngRaw * 180.0) / ((semiMajorAxis / sqrtMagic) * Math.cos(radianLatitude) * PI);
+
+  const longitudeWGS84 = longitudeGCJ - longitudeOffset;
+  const latitudeWGS84 = latitudeGCJ - latitudeOffset;
+
+  return [longitudeWGS84, latitudeWGS84];
 }
 
 /**
- * 检查坐标是否在中国大陆范围内
- * 
- * 此函数用于判断给定坐标是否需要进行GCJ02加密
- * 
- * @param longitude - 经度
- * @param latitude - 纬度
- * @returns 是否在中国大陆范围内
- * 
- * @example
- * ```typescript
- * const inChina = isInChinaMainland(116.397428, 39.90923); // true (北京)
- * const notInChina = isInChinaMainland(139.6917, 35.6895); // false (东京)
- * ```
+ * 批量将一组 GCJ-02 点转换为 WGS-84
+ * @param points GCJ-02 点数组（元素为 [经度, 纬度]）
+ * @returns WGS-84 点数组
  */
-export function isInChinaMainland(longitude: number, latitude: number): boolean {
-  return longitude >= 72.004 && longitude <= 137.8347 && 
-         latitude >= 0.8293 && latitude <= 55.8271;
+function batchConvertGcj02ToWgs84(points: CoordinatePoint[]): CoordinatePoint[] {
+  return points.map(([lng, lat]) => convertGcj02ToWgs84(lng, lat));
 }
 
 /**
- * 批量坐标转换
- * 
- * @param coordinates - GCJ02坐标数组
- * @returns WGS84坐标数组
- * 
- * @example
- * ```typescript
- * const gcj02Points: CoordinatePoint[] = [
- *   [116.397428, 39.90923],  // 北京天安门
- *   [121.473701, 31.230416]  // 上海外滩
- * ];
- * const wgs84Points = batchConvertGcj02ToWgs84(gcj02Points);
- * ```
+ * 判断坐标是否位于中国大陆范围内（含近海带）
  */
-export function batchConvertGcj02ToWgs84(coordinates: CoordinatePoint[]): CoordinatePoint[] {
-  return coordinates.map(([lng, lat]) => convertGcj02ToWgs84(lng, lat));
+function isInChinaMainland(longitude: number, latitude: number): boolean {
+  return longitude >= 72.004 && longitude <= 137.8347 && latitude >= 0.8293 && latitude <= 55.8271;
 }
 
 /**
- * 向后兼容的函数别名
- * @deprecated 请使用 convertGcj02ToWgs84 替代
+ * 导出统一工具对象
  */
-export const gcj02towgs84 = convertGcj02ToWgs84;
+export const coordinateConverter = {
+  convertGcj02ToWgs84,
+  batchConvertGcj02ToWgs84,
+  isInChinaMainland,
+};
