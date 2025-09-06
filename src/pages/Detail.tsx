@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Button, Spinner, Card, CardBody } from '@heroui/react';
 import { ChevronLeftIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useBuildingDetail } from '../hooks';
 
@@ -11,7 +12,7 @@ const Detail: FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <Spinner size="lg" color="primary" />
       </div>
     );
   }
@@ -19,20 +20,24 @@ const Detail: FC = () => {
   if (error) {
     return (
       <div className="p-5">
-        <button 
-          className="flex items-center text-blue-600 hover:text-blue-800 mb-5"
-          onClick={() => navigate(-1)}
+        <Button 
+          variant="light"
+          color="primary"
+          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          onPress={() => navigate(-1)}
+          className="mb-5"
         >
-          <ChevronLeftIcon className="h-5 w-5 mr-2" />
           返回
-        </button>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-2" />
-            <h3 className="text-sm font-medium text-red-800">加载失败</h3>
-          </div>
-          <p className="mt-2 text-sm text-red-700">{error}</p>
-        </div>
+        </Button>
+        <Card className="border-danger-200 bg-danger-50">
+          <CardBody>
+            <div className="flex items-center">
+              <ExclamationTriangleIcon className="h-5 w-5 text-danger-500 mr-2" />
+              <h3 className="text-sm font-medium text-danger-800">加载失败</h3>
+            </div>
+            <p className="mt-2 text-sm text-danger-700">{error}</p>
+          </CardBody>
+        </Card>
       </div>
     );
   }
@@ -40,19 +45,23 @@ const Detail: FC = () => {
   if (!building) {
     return (
       <div className="p-5">
-        <button 
-          className="flex items-center text-blue-600 hover:text-blue-800 mb-5"
-          onClick={() => navigate(-1)}
+        <Button 
+          variant="light"
+          color="primary"
+          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          onPress={() => navigate(-1)}
+          className="mb-5"
         >
-          <ChevronLeftIcon className="h-5 w-5 mr-2" />
           返回
-        </button>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400 mr-2" />
-            <h3 className="text-sm font-medium text-yellow-800">未找到相关信息</h3>
-          </div>
-        </div>
+        </Button>
+        <Card className="border-warning-200 bg-warning-50">
+          <CardBody>
+            <div className="flex items-center">
+              <ExclamationTriangleIcon className="h-5 w-5 text-warning-500 mr-2" />
+              <h3 className="text-sm font-medium text-warning-800">未找到相关信息</h3>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     );
   }
@@ -61,12 +70,15 @@ const Detail: FC = () => {
     <div className="bg-blue-50 min-h-screen">
       {/* 顶部返回按钮 */}
       <div className="absolute top-5 left-5 z-50">
-        <button 
-          className="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all"
-          onClick={() => navigate(-1)}
+        <Button 
+          isIconOnly
+          variant="solid"
+          color="default"
+          className="bg-white/90 hover:bg-white shadow-lg"
+          onPress={() => navigate(-1)}
         >
           <ChevronLeftIcon className="h-5 w-5 text-gray-600" />
-        </button>
+        </Button>
       </div>
 
       {/* 头部封面图片和标题 */}
