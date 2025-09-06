@@ -128,22 +128,27 @@ const Index: React.FC = () => {
 
       {/* 新生手册抽屉 */}
       {isManualShow && manualData && (
-        <BottomSheet
+        <BuildingSelectionSheet
           isOpen={isManualShow}
           onClose={() => toggleManualSheet(false)}
-          title="手册"
-          items={Object.keys(manualData).flatMap((groupKey, gi) =>
+          title="新生手册"
+          buildings={Object.keys(manualData).flatMap((groupKey, gi) =>
             manualData[groupKey].map((item: ManualItem, idx: number) => ({
               id: `${gi}-${idx}`,
-              name: item.name || "未命名",
-              description: undefined,
-              category: groupKey
+              name: item.name || item.title || "未命名手册",
+              info: `${groupKey}分类`,
+              coordinates: item.coordinates || [0, 0],
+              priority: item.priority || 0,
+              functions: [groupKey],
+              location_id: item.location_id || item.locationId || `manual-${gi}-${idx}`
             }))
           )}
-          onItemClick={(item) => {
-            const [gi, idx] = item.id.split('-').map(Number);
+          onBuildingSelect={(building) => {
+            const buildingId = typeof building.id === 'string' ? building.id : String(building.id);
+            const [gi, idx] = buildingId.split('-').map(Number);
             manualSelectOnly(idx, gi);
           }}
+          selectedCategory="新生手册"
           emptyMessage="暂无手册数据"
         />
       )}
