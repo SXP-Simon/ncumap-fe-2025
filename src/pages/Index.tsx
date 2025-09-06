@@ -2,7 +2,7 @@ import { useRef, Suspense } from 'react';
 import { Spinner } from '@heroui/react';
 import OpenMap, { type OpenMapRef } from '../components/OpenMap';
 import { usePageLogic } from '../hooks';
-import { NavigationTabs, SchoolCarModal, BottomSheet, BuildingSelectionSheet, FloatingActionButtons } from '../components/ui';
+import { NavigationTabs, SchoolCarModal, GlassmorphismSelectingSheet, FloatingActionButtons } from '../components/ui';
 import type { ActivityListItem, ManualItem } from '../hooks/types';
 
 const Index: React.FC = () => {
@@ -86,7 +86,7 @@ const Index: React.FC = () => {
 
       {/* 建筑选择菜单 - 深度玻璃拟物化 */}
       {isCategoriesSheetShow && (
-        <BuildingSelectionSheet
+        <GlassmorphismSelectingSheet
           isOpen={isCategoriesSheetShow}
           onClose={() => toggleCategoriesSheet(false)}
           title="选择地点"
@@ -104,31 +104,40 @@ const Index: React.FC = () => {
 
       {/* 活动列表抽屉 */}
       {isActivitiesSheetShow && (
-        <BottomSheet
+        <GlassmorphismSelectingSheet
           isOpen={isActivitiesSheetShow}
           onClose={() => toggleActivitiesSheet(false)}
-          title="活动"
-          items={getActivitiesList().length > 0 ? getActivitiesList().map((item: ActivityListItem, index: number) => ({
+          title="校园活动"
+          buildings={getActivitiesList().length > 0 ? getActivitiesList().map((item: ActivityListItem, index: number) => ({
             id: item.location_id ?? 
                 ('location_id' in item.raw ? item.raw.location_id : undefined) ?? 
                 ('locationId' in item.raw ? item.raw.locationId : undefined) ??
                 ('id' in item.raw ? String(item.raw.id) : undefined) ??
                 index.toString(),
             name: item.title,
-            description: item.name || ('info' in item.raw ? item.raw.info : ('description' in item.raw ? item.raw.description : '')),
-            category: "活动"
+            info: item.name || ('info' in item.raw ? item.raw.info : ('description' in item.raw ? item.raw.description : '')),
+            coordinates: [0, 0], // 活动坐标，可以根据实际需要调整
+            priority: 0,
+            functions: ["活动"],
+            location_id: item.location_id ?? 
+                        ('location_id' in item.raw ? item.raw.location_id : undefined) ?? 
+                        ('locationId' in item.raw ? item.raw.locationId : undefined) ??
+                        ('id' in item.raw ? String(item.raw.id) : undefined) ??
+                        index.toString()
           })) : []}
-          onItemClick={(item) => {
+          onBuildingSelect={(building) => {
             toggleActivitiesSheet(false);
-            handleFeatureSelected(item.id);
+            const buildingId = typeof building.id === 'string' ? building.id : String(building.id);
+            handleFeatureSelected(buildingId);
           }}
+          selectedCategory="校园活动"
           emptyMessage="暂无活动数据"
         />
       )}
 
       {/* 新生手册抽屉 */}
       {isManualShow && manualData && (
-        <BuildingSelectionSheet
+        <GlassmorphismSelectingSheet
           isOpen={isManualShow}
           onClose={() => toggleManualSheet(false)}
           title="新生手册"

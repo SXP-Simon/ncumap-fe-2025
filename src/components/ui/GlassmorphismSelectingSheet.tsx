@@ -2,7 +2,7 @@ import { Card, CardBody, Button, Chip } from "@heroui/react";
 import { MapPinIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import type { MapMark } from '../../hooks/types';
 
-interface BuildingSelectionSheetProps {
+interface GlassmorphismSelectingSheetProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -12,7 +12,7 @@ interface BuildingSelectionSheetProps {
   emptyMessage?: string;
 }
 
-export const BuildingSelectionSheet: React.FC<BuildingSelectionSheetProps> = ({
+export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetProps> = ({
   isOpen,
   onClose,
   title,
