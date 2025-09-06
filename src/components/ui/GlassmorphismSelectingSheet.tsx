@@ -71,28 +71,22 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
       placement="bottom" 
       onOpenChange={(open) => !open && handleClose()}
       size="lg"
+      hideCloseButton={true}
       className={`
-        [&_[data-slot=backdrop]]:transition-all [&_[data-slot=backdrop]]:duration-300
+        [&_[data-slot=backdrop]]:glass-modal-backdrop
         ${isClosing 
           ? '[&_[data-slot=backdrop]]:bg-black/0 [&_[data-slot=backdrop]]:backdrop-blur-0' 
-          : '[&_[data-slot=backdrop]]:bg-black/10 [&_[data-slot=backdrop]]:backdrop-blur-2xl'
+          : ''
         }
       `}
     >
       <DrawerContent className={`
-        border border-white/20 rounded-t-3xl
-        shadow-2xl shadow-black/20
-        before:absolute before:inset-0 before:rounded-t-3xl
-        before:bg-gradient-to-br before:from-white/10 before:via-white/5 before:to-transparent
-        before:border before:border-white/10 before:pointer-events-none
-        after:absolute after:top-0 after:left-1/4 after:right-1/4 after:h-px
-        after:bg-gradient-to-r after:from-transparent after:via-white/40 after:to-transparent
-        after:blur-sm after:pointer-events-none
+        glass-base glass-container-lg
         max-h-[75vh] min-h-[50vh]
         transition-all duration-300 ease-out
         ${isClosing 
           ? 'bg-white/0 backdrop-blur-0 opacity-0 translate-y-full' 
-          : 'bg-white/5 backdrop-blur-3xl opacity-100 translate-y-0'
+          : 'opacity-100 translate-y-0'
         }
       `}>
         {() => (
@@ -103,30 +97,16 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
               transition-all duration-200
               ${isClosing ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
             `}>
-              <div className="
-                w-12 h-1.5 bg-white/30 backdrop-blur-xl rounded-full
-                shadow-inner shadow-white/20 border border-white/30
-                relative overflow-hidden
-                before:absolute before:inset-0 before:bg-gradient-to-r
-                before:from-transparent before:via-white/50 before:to-transparent before:rounded-full
-              "></div>
+              <div className="glass-handle"></div>
             </div>
 
             <DrawerHeader className={`
               flex items-center justify-between px-5 py-4
-              bg-white/3 backdrop-blur-2xl border-b border-white/10
-              relative z-20 transition-all duration-300
+              glass-header relative z-20 transition-all duration-300
               ${isClosing ? 'opacity-0 -translate-y-2' : 'opacity-100 translate-y-0'}
             `}>
               <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div className="
-                  p-3 bg-white/10 backdrop-blur-xl 
-                  border border-white/20 rounded-xl
-                  shadow-inner shadow-white/20
-                  relative overflow-hidden flex-shrink-0
-                  before:absolute before:top-0 before:left-0 before:right-0 before:h-px
-                  before:bg-gradient-to-r before:from-transparent before:via-white/50 before:to-transparent
-                ">
+                <div className="glass-icon-container-lg flex-shrink-0">
                   <MapPinIcon className="w-5 h-5 text-blue-500 drop-shadow-lg" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -134,11 +114,7 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                   <Chip 
                     size="sm" 
                     variant="flat"
-                    className="
-                      bg-white/10 backdrop-blur-xl text-blue-600 
-                      border border-white/20 font-medium mt-1
-                      shadow-inner shadow-white/10
-                    "
+                    className="glass-chip text-blue-600 mt-1"
                   >
                     {selectedCategory}
                   </Chip>
@@ -150,42 +126,24 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                 size="md"
                 variant="light"
                 onPress={handleClose}
-                className="
-                  bg-white/10 backdrop-blur-xl border border-white/20
-                  hover:bg-white/20 hover:scale-105
-                  transition-all duration-300 rounded-xl
-                  shadow-inner shadow-white/10
-                "
+                className="glass-button"
               >
                 <XMarkIcon className="w-5 h-5 text-gray-600" />
               </Button>
             </DrawerHeader>
 
             <DrawerBody className="
-              flex-1 overflow-y-auto px-4 py-4 relative z-10
-              bg-white/2 backdrop-blur-xl
+              flex-1 overflow-y-auto px-4 py-4 relative z-10 bg-white/2 backdrop-blur-xl
               max-h-[calc(75vh-10rem)]
             ">
               {buildings.length === 0 ? (
                 <div className={`
                   flex flex-col items-center justify-center py-20
-                  bg-white/5 backdrop-blur-2xl border border-white/10 
-                  rounded-2xl shadow-xl shadow-black/5
-                  relative overflow-hidden
-                  before:absolute before:inset-0 before:rounded-2xl
-                  before:bg-gradient-to-br before:from-white/5 before:to-transparent
+                  glass-base glass-container relative overflow-hidden
                   transition-all duration-300
                   ${isClosing ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}
                 `}>
-                  <div className="
-                    w-24 h-24 bg-white/10 backdrop-blur-xl 
-                    border border-white/20 rounded-full 
-                    flex items-center justify-center mb-6
-                    shadow-inner shadow-white/20
-                    relative overflow-hidden
-                    before:absolute before:top-2 before:left-1/4 before:right-1/4 before:h-px
-                    before:bg-gradient-to-r before:from-transparent before:via-white/50 before:to-transparent
-                  ">
+                  <div className="glass-icon-container w-24 h-24 flex-center mb-6">
                     <MapPinIcon className="w-12 h-12 text-gray-400 drop-shadow-lg" />
                   </div>
                   <p className="text-lg font-medium text-gray-600 drop-shadow-sm">{emptyMessage}</p>
@@ -199,34 +157,12 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                       key={building.id || index}
                       isPressable
                       onPress={() => handleBuildingSelect(building, index)}
-                      className="
-                        group bg-white/5 backdrop-blur-3xl 
-                        border border-white/15 rounded-xl
-                        hover:bg-white/10 hover:border-white/25
-                        hover:scale-[1.02] hover:-translate-y-1
-                        transition-all duration-400 ease-out
-                        shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10
-                        relative overflow-hidden w-full
-                        before:absolute before:inset-0 before:rounded-xl
-                        before:bg-gradient-to-br before:from-white/10 before:via-white/5 before:to-transparent
-                        before:opacity-0 before:group-hover:opacity-100
-                        before:transition-opacity before:duration-400
-                        after:absolute after:top-0 after:left-1/4 after:right-1/4 after:h-px
-                        after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent
-                        after:opacity-0 after:group-hover:opacity-100
-                        after:transition-opacity after:duration-400
-                      "
+                      className="glass-base glass-card group w-full"
                     >
                       <CardBody className="p-5 relative z-10">
                         <div className="flex items-center justify-between w-full">
                           <div className="flex items-center space-x-4 flex-1 min-w-0">
-                            <div className="
-                              p-2 bg-white/10 backdrop-blur-xl 
-                              border border-white/20 rounded-lg
-                              shadow-inner shadow-white/10
-                              group-hover:bg-white/15 group-hover:scale-110
-                              transition-all duration-300 flex-shrink-0
-                            ">
+                            <div className="glass-icon-container-sm flex-shrink-0 group-hover:scale-110 transition-all duration-300">
                               <MapPinIcon className="w-4 h-4 text-blue-500" />
                             </div>
                             
@@ -256,11 +192,7 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                                       key={idx}
                                       size="sm"
                                       variant="flat"
-                                      className="
-                                        bg-white/10 backdrop-blur-xl text-blue-600
-                                        border border-white/20 font-medium
-                                        shadow-inner shadow-white/10 flex-shrink-0
-                                      "
+                                      className="glass-chip text-blue-600 flex-shrink-0"
                                     >
                                       {func}
                                     </Chip>
@@ -269,10 +201,7 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                                     <Chip
                                       size="sm"
                                       variant="flat"
-                                      className="
-                                        bg-white/10 backdrop-blur-xl text-gray-500
-                                        border border-white/20 flex-shrink-0
-                                      "
+                                      className="glass-chip text-gray-500 flex-shrink-0"
                                     >
                                       +{building.functions.length - 4}
                                     </Chip>
@@ -282,13 +211,7 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                             </div>
                           </div>
                           
-                          <div className="
-                            ml-4 p-3 bg-white/10 backdrop-blur-xl 
-                            border border-white/20 rounded-xl
-                            group-hover:bg-white/15 group-hover:scale-110 group-hover:rotate-3
-                            transition-all duration-300 shadow-inner shadow-white/10
-                            flex-shrink-0
-                          ">
+                          <div className="glass-button-sm ml-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0">
                             <div className="w-2 h-2 bg-blue-500 rounded-full shadow-lg"></div>
                           </div>
                         </div>

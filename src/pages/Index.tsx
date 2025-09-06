@@ -62,7 +62,7 @@ const Index: React.FC = () => {
       )}
 
       {/* 主地图 */}
-      <div className={`h-screen w-full pt-16 transition-all duration-300 ${
+      <div className={`h-screen w-full transition-all duration-300 ${
         isCategoriesSheetShow || isManualShow || isActivitiesSheetShow ? 'h-1/2' : ''
       }`}>
         <Suspense fallback={

@@ -29,7 +29,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-gray-200 max-h-[50vh] flex flex-col">
+    <div className="bottom-sheet">
       {/* 顶部拖拽指示器 */}
       <div className="flex justify-center pt-3 pb-2">
         <div className="w-12 h-1 bg-gray-300 rounded-full"></div>

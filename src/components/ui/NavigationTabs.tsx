@@ -66,50 +66,31 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
 
   return (
     <div className="w-full relative">
-      {/* 高级透明玻璃背景框架 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/0.5 via-white/1 to-white/0.3 backdrop-blur-3xl">
-        {/* 多层玻璃反射效果 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/0.3 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-white/1.5 via-transparent to-white/0.5"></div>
+      {/* 液体玻璃导航容器 */}
+      <div className="glass-base glass-container py-3 relative overflow-hidden">
+        {/* 玻璃光效层 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-white/8 via-transparent to-white/3"></div>
         
-        {/* 玻璃边框和内表面 */}
-        <div className="absolute inset-0 border-t border-white/2 border-b border-white/1.5 shadow-lg shadow-black/0.5"></div>
-        <div className="absolute inset-0 shadow-inner shadow-white/3"></div>
-        
-        {/* 顶部和底部光线 */}
-        <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/3 to-transparent blur-sm"></div>
-        <div className="absolute bottom-0 left-1/3 right-1/3 h-px bg-gradient-to-r from-transparent via-white/2 to-transparent"></div>
-      </div>
-      
-      <div className="relative flex items-center min-h-[72px] px-3">
-        {/* 左侧滚动按钮 - 透明玻璃设计 (小屏幕隐藏) */}
+        {/* 左侧滚动按钮 */}
         {showLeftScroll && (
-          <div className="absolute left-4 z-30 hidden md:block">
+          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-30">
             <Button
               isIconOnly
               variant="light"
               size="sm"
               onPress={scrollLeft}
-              className="
-                bg-white/0.5 backdrop-blur-2xl border border-white/3 
-                shadow-sm shadow-black/1 hover:bg-white/2 hover:border-white/6
-                hover:shadow-md hover:shadow-black/2 transition-all duration-500 
-                rounded-2xl transform hover:scale-105
-                before:absolute before:inset-0 before:bg-gradient-to-br 
-                before:from-white/1 before:to-transparent before:rounded-2xl
-                after:absolute after:inset-0 after:border after:border-white/2 
-                after:rounded-2xl after:shadow-inner after:shadow-white/5
-              "
+              className="glass-button-sm"
             >
-              <ChevronLeftIcon className="w-4 h-4 text-gray-400 drop-shadow-sm" />
+              <ChevronLeftIcon className="w-4 h-4 text-gray-600" />
             </Button>
           </div>
         )}
 
-        {/* 标签容器 - 纯透明玻璃质感 */}
+        {/* 标签滚动容器 */}
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-auto py-6 px-4 md:px-12 gap-4 scrollbar-hide scroll-smooth"
+          className="flex overflow-x-auto gap-3 scrollbar-hide scroll-smooth px-2 sm:px-8 touch-pan-x"
         >
           {categories.map((category, index) => {
             const isSelected = selectedIndex === index;
@@ -117,90 +98,45 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
               <Button
                 key={category}
                 variant="light"
-                size="md"
+                size="sm"
                 onPress={() => onSelectionChange(index)}
                 className={`
-                  relative min-w-fit px-10 py-4 font-medium text-sm whitespace-nowrap
-                  transition-all duration-700 ease-out rounded-xl group
+                  relative min-w-fit px-4 py-2 font-medium text-sm whitespace-nowrap group
                   ${isSelected 
-                    ? `
-                      bg-gradient-to-br from-white/15 via-white/20 to-white/12 
-                      backdrop-blur-xl border border-white/25 text-gray-800
-                      shadow-xl shadow-black/8 hover:shadow-2xl hover:shadow-black/10
-                      transform scale-103 hover:scale-105
-                      before:absolute before:inset-0 before:bg-gradient-to-br 
-                      before:from-white/30 before:via-white/15 before:to-transparent before:rounded-xl
-                      after:absolute after:inset-px after:bg-gradient-to-br 
-                      after:from-transparent after:to-white/8 after:rounded-xl
-                    `
-                    : `
-                      bg-white/0.5 backdrop-blur-2xl border border-white/2 
-                      text-gray-400 hover:bg-white/1.5 hover:border-white/4
-                      shadow-sm shadow-black/0.5 hover:shadow-md hover:shadow-black/1
-                      transform hover:scale-102
-                      before:absolute before:inset-0 before:bg-gradient-to-br 
-                      before:from-white/0.3 before:to-transparent before:rounded-xl
-                      after:absolute after:inset-0 after:shadow-inner 
-                      after:shadow-white/2 after:rounded-xl
-                    `
+                    ? 'glass-nav-tab glass-nav-tab-active text-gray-800' 
+                    : 'glass-nav-tab text-gray-500 hover:text-gray-700'
                   }
                 `}
               >
-                {/* 纯净玻璃光效层 */}
+                {/* 选中状态的额外光效 */}
                 {isSelected && (
-                  <>
-                    <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/15 to-white/25 rounded-xl"></div>
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-white/8 via-white/12 to-white/8 rounded-xl blur-lg -z-10 opacity-60"></div>
-                  </>
+                  <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20 rounded-xl pointer-events-none"></div>
                 )}
                 
-                {/* 极致纯净文字 */}
-                <span className={`relative z-10 ${isSelected ? 'drop-shadow-md' : 'drop-shadow-sm'}`}>
+                {/* 文字内容 */}
+                <span className="relative z-10">
                   {category}
                 </span>
-                
-                {/* 玻璃内表面反射 */}
-                <div className={`
-                  absolute inset-0 rounded-xl transition-all duration-700
-                  ${isSelected 
-                    ? 'shadow-inner shadow-white/10' 
-                    : 'group-hover:shadow-inner group-hover:shadow-white/5'
-                  }
-                `}></div>
               </Button>
             );
           })}
         </div>
 
-        {/* 右侧滚动按钮 - 透明玻璃设计 (小屏幕隐藏) */}
+        {/* 右侧滚动按钮 */}
         {showRightScroll && (
-          <div className="absolute right-4 z-30 hidden md:block">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-30">
             <Button
               isIconOnly
               variant="light"
               size="sm"
               onPress={scrollRight}
-              className="
-                bg-white/0.5 backdrop-blur-2xl border border-white/3 
-                shadow-sm shadow-black/1 hover:bg-white/2 hover:border-white/6
-                hover:shadow-md hover:shadow-black/2 transition-all duration-500 
-                rounded-2xl transform hover:scale-105
-                before:absolute before:inset-0 before:bg-gradient-to-br 
-                before:from-white/1 before:to-transparent before:rounded-2xl
-                after:absolute after:inset-0 after:border after:border-white/2 
-                after:rounded-2xl after:shadow-inner after:shadow-white/5
-              "
+              className="glass-button-sm"
             >
-              <ChevronRightIcon className="w-4 h-4 text-gray-400 drop-shadow-sm" />
+              <ChevronRightIcon className="w-4 h-4 text-gray-600" />
             </Button>
           </div>
         )}
       </div>
-      
-      {/* 透明玻璃底部框架 */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/0.8 to-transparent shadow-sm shadow-white/2"></div>
-      <div className="absolute bottom-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-gray-50/0.5 to-transparent"></div>
-      <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-transparent via-white/1 to-transparent blur-sm"></div>
     </div>
   );
 };
