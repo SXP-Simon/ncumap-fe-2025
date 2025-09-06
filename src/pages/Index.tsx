@@ -49,7 +49,7 @@ const Index: React.FC = () => {
     // 创建选项卡数据
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gray-50">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       {/* 上方选项卡 */}
       {map.marks && (
         <div className="absolute z-50 w-full">
