@@ -35,6 +35,7 @@ export function useNavigationActions({ mapRef }: PageLogicParams, manualData: Ma
   return {
     manualRedirect: manual.manualRedirect,
     manualSelect: manual.manualSelect,
+    manualSelectOnly: manual.manualSelectOnly,
     toChatAI,
     handleFeatureSelected,
   };

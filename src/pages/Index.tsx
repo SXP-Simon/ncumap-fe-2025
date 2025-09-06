@@ -42,7 +42,7 @@ const Index: React.FC = () => {
     setSchoolCarNumber
   } = uiActions;
   
-  const { manualRedirect, manualSelect, toChatAI, handleFeatureSelected } = navigationActions;
+  const { manualSelectOnly, toChatAI, handleFeatureSelected } = navigationActions;
   const { getCurrentMarks } = mapActions;
   const { getActivitiesList } = dataActions;
 
@@ -148,8 +148,7 @@ const Index: React.FC = () => {
           )}
           onItemClick={(item) => {
             const [gi, idx] = item.id.split('-').map(Number);
-            manualSelect(idx, gi);
-            manualRedirect();
+            manualSelectOnly(idx, gi);
           }}
           emptyMessage="暂无手册数据"
         />

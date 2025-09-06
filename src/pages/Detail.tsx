@@ -92,7 +92,7 @@ const Detail: FC = () => {
         <div
           className="h-full bg-cover bg-center"
           style={{
-            backgroundImage: `url(${building.cover || '/images/covers/图书馆.png'})`
+            backgroundImage: `url(${building.cover || '/map-cut.png'})`
           }}
         >
           {/* 渐变遮罩层 */}

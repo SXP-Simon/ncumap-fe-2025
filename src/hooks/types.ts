@@ -156,6 +156,7 @@ export interface UIActions {
 export interface NavigationActions {
   manualRedirect: ReturnType<typeof useManual>['manualRedirect'];
   manualSelect: ReturnType<typeof useManual>['manualSelect'];
+  manualSelectOnly: ReturnType<typeof useManual>['manualSelectOnly'];
   toChatAI: () => void;
   handleFeatureSelected: (locationId: string) => void;
 }
