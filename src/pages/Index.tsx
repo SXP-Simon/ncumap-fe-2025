@@ -2,8 +2,8 @@ import { useRef, Suspense } from 'react';
 import { Spinner } from '@heroui/react';
 import OpenMap, { type OpenMapRef } from '../components/OpenMap';
 import { usePageLogic } from '../hooks';
-import { NavigationTabs, SchoolCarModal, BottomSheet, FloatingActionButtons } from '../components/ui';
-import type { MapMark, ActivityListItem, ManualItem } from '../hooks/types';
+import { NavigationTabs, SchoolCarModal, BottomSheet, BuildingSelectionSheet, FloatingActionButtons } from '../components/ui';
+import type { ActivityListItem, ManualItem } from '../hooks/types';
 
 const Index: React.FC = () => {
   const mapRef = useRef<OpenMapRef | null>(null);
@@ -84,27 +84,19 @@ const Index: React.FC = () => {
         />
       )}
 
-      {/* 建筑选择菜单 */}
+      {/* 建筑选择菜单 - 深度玻璃拟物化 */}
       {isCategoriesSheetShow && (
-        <BottomSheet
+        <BuildingSelectionSheet
           isOpen={isCategoriesSheetShow}
           onClose={() => toggleCategoriesSheet(false)}
           title="选择地点"
-          items={getCurrentMarks().map((item: MapMark, index: number) => ({
-            id: item.location_id ?? String(item.id) ?? item.locationId ?? index.toString(),
-            name: item.name,
-            description: item.info,
-            category: undefined
-          }))}
-          onItemClick={(item) => {
-            const selectedIndex = getCurrentMarks().findIndex(mark => 
-              (mark.location_id ?? String(mark.id) ?? mark.locationId) === item.id
-            );
-            if (selectedIndex >= 0) {
-              mapViewToLocation(item.id);
-              // 关闭底部抽屉
-              toggleCategoriesSheet(false);
-            }
+          buildings={getCurrentMarks()}
+          selectedCategory={map.categories[map.currentCategory] || "全部"}
+          onBuildingSelect={(building, index) => {
+            const locationId = building.location_id ?? String(building.id) ?? building.locationId ?? index.toString();
+            mapViewToLocation(locationId);
+            // 关闭底部抽屉
+            toggleCategoriesSheet(false);
           }}
           emptyMessage="该分类下暂无地点"
         />
