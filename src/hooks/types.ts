@@ -137,6 +137,7 @@ export interface MapActions {
   setMap: ReturnType<typeof useMapState>['setMap'];
   updateFromRef: ReturnType<typeof useMapState>['updateFromRef'];
   getCurrentMarks: ReturnType<typeof useMapState>['getCurrentMarks'];
+  mapViewToLocation: (locationId: string) => void;
 }
 
 // UI 控制接口

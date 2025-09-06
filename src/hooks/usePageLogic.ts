@@ -34,7 +34,7 @@ export function usePageLogic(mapRef: React.RefObject<OpenMapRef | null>) {
   const params: PageLogicParams = { mapRef };
 
   // 功能域 hooks
-  const mapActions = useMapActions(setMap, updateFromRef, getCurrentMarks);
+  const mapActions = useMapActions(setMap, updateFromRef, getCurrentMarks, mapRef, map);
   const uiActions = useUIActions(params, ui, map, setMap);
   const navigationActions = useNavigationActions(params, manualData);
   const dataActions = useDataActions(activitiesData, map.marks);

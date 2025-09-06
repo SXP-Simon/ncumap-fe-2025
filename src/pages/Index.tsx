@@ -43,7 +43,7 @@ const Index: React.FC = () => {
   } = uiActions;
   
   const { manualSelectOnly, toChatAI, handleFeatureSelected } = navigationActions;
-  const { getCurrentMarks } = mapActions;
+  const { getCurrentMarks, mapViewToLocation } = mapActions;
   const { getActivitiesList } = dataActions;
 
     // 创建选项卡数据
@@ -101,7 +101,9 @@ const Index: React.FC = () => {
               (mark.location_id ?? String(mark.id) ?? mark.locationId) === item.id
             );
             if (selectedIndex >= 0) {
-              handleFeatureSelected(item.id);
+              mapViewToLocation(item.id);
+              // 关闭底部抽屉
+              toggleCategoriesSheet(false);
             }
           }}
           emptyMessage="该分类下暂无地点"
