@@ -10,6 +10,7 @@ import {
   PhotoIcon
 } from '@heroicons/react/24/outline';
 import { useBuildingDetail } from '../hooks';
+import { toChatAI } from '../utils/navigation';
 
 const Detail: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -306,10 +307,7 @@ const Detail: FC = () => {
           <CardBody className="p-6 text-center">
             <p className="text-gray-700 mb-4">想了解更多校园信息？</p>
             <Button
-              as="a"
-              href="https://aiguide.ncuos.com/welcome"
-              target="_blank"
-              rel="noopener noreferrer"
+              onPress={toChatAI}
               variant="shadow"
               className="bg-[#39C5BB] hover:bg-[#2fb3a8] text-white font-semibold transition-colors duration-300"
             >
