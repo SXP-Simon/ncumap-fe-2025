@@ -85,6 +85,7 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
         glass-base glass-container-lg
         max-h-[75vh] min-h-[50vh]
         transition-all duration-300 ease-out
+        rounded-t-2xl overflow-hidden
         ${isClosing 
           ? 'bg-white/0 backdrop-blur-0 opacity-0 translate-y-full' 
           : 'opacity-100 translate-y-0'
@@ -92,15 +93,6 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
       `}>
         {() => (
           <>
-            <div className={`
-              flex justify-center pt-4 pb-2 relative z-20
-              before:absolute before:inset-0 before:bg-white/5 before:backdrop-blur-lg
-              transition-all duration-200
-              ${isClosing ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
-            `}>
-              <div className="glass-handle"></div>
-            </div>
-
             <DrawerHeader className={`
               flex items-center justify-between px-5 py-4
               glass-header relative z-20 transition-all duration-300
