@@ -63,6 +63,11 @@ export interface ActivityItem {
   location?: string;
   time?: string;
   type?: string;
+  // optional fields that may appear in different API versions
+  id?: string | number;
+  coordinates?: [number, number];
+  priority?: number;
+  info?: string;
 }
 
 export interface ActivitiesData {
@@ -76,6 +81,30 @@ export interface ActivityListItem {
   name?: string;
   raw: ActivityItem | MapMark;
 }
+
+// Activity item extended for UI usage
+export interface ActivityUIItem extends ActivityListItem {
+  id: string | number;
+  info?: string;
+  coordinates?: [number, number];
+  priority?: number;
+  functions?: string[];
+}
+
+// 手册列表项（扁平化后，用于页面展示）
+export interface ManualListItem {
+  id: string | number;
+  name: string;
+  info: string;
+  coordinates: [number, number];
+  priority: number;
+  functions: string[];
+  location_id: string;
+  __groupIndex: number;
+  __itemIndex: number;
+}
+
+export type UIListItem = MapMark | ActivityUIItem | ManualListItem;
 
 // 手册相关类型定义
 export interface ManualItem {
@@ -164,7 +193,7 @@ export interface NavigationActions {
 
 // 数据操作接口
 export interface DataActions {
-  getActivitiesList: () => ActivityListItem[];
+  getActivitiesList: () => ActivityUIItem[];
 }
 
 // 页面逻辑动作集合
@@ -195,6 +224,18 @@ export interface PageLogicState {
   data: {
     manualData: ReturnType<typeof useFetchData>['manualData'];
     activitiesData: ReturnType<typeof useFetchData>['activitiesData'];
+      // 扁平化的手册列表，供页面直接渲染
+      manualList?: Array<{
+        id: string | number;
+        name: string;
+        info: string;
+        coordinates: [number, number];
+        priority: number;
+        functions: string[];
+        location_id: string;
+        __groupIndex: number;
+        __itemIndex: number;
+      }>;
     manualGroupIndex: ReturnType<typeof useManual>['manualGroupIndex'];
     manualSelectedIndex: ReturnType<typeof useManual>['manualSelectedIndex'];
   };

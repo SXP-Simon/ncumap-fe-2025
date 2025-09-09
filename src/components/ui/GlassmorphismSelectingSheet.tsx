@@ -10,14 +10,15 @@ import {
   Chip
 } from "@heroui/react";
 import { MapPinIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import type { MapMark } from '../../hooks/types';
+import type { UIListItem } from '../../hooks/types';
 
 interface GlassmorphismSelectingSheetProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  buildings: MapMark[];
-  onBuildingSelect: (building: MapMark, index: number) => void;
+  // accept a generic list so sheet can render categories, activities or manual items
+  buildings: UIListItem[];
+  onBuildingSelect: (building: UIListItem, index: number) => void;
   selectedCategory: string;
   emptyMessage?: string;
 }
@@ -46,7 +47,7 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
   };
 
   // 处理建筑选择并触发关闭动画
-  const handleBuildingSelect = (building: MapMark, index: number) => {
+  const handleBuildingSelect = (building: UIListItem, index: number) => {
     setIsClosing(true);
     // 稍微延迟一下再执行选择，让用户看到点击反馈
     setTimeout(() => {
@@ -186,17 +187,17 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                               )}
                               
                               {building.functions && building.functions.length > 0 && (
-                                <div className="flex flex-wrap gap-2 pt-1">
-                                  {building.functions.slice(0, 4).map((func, idx) => (
-                                    <Chip
-                                      key={idx}
-                                      size="sm"
-                                      variant="flat"
-                                      className="glass-chip text-blue-600 flex-shrink-0"
-                                    >
-                                      {func}
-                                    </Chip>
-                                  ))}
+                                            <div className="flex flex-wrap gap-2 pt-1">
+                                              {building.functions.slice(0, 4).map((func: string, idx: number) => (
+                                                <Chip
+                                                  key={idx}
+                                                  size="sm"
+                                                  variant="flat"
+                                                  className="glass-chip text-blue-600 flex-shrink-0"
+                                                >
+                                                  {func}
+                                                </Chip>
+                                              ))}
                                   {building.functions.length > 4 && (
                                     <Chip
                                       size="sm"

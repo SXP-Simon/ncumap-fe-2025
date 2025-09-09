@@ -3,7 +3,8 @@ import { Spinner } from '@heroui/react';
 import OpenMap, { type OpenMapRef } from '../components/OpenMap';
 import { usePageLogic } from '../hooks';
 import { NavigationTabs, SchoolCarModal, GlassmorphismSelectingSheet, FloatingActionButtons } from '../components/ui';
-import type { ActivityListItem, ManualItem } from '../hooks/types';
+import { resolveLocationId } from '../utils/location';
+// ...existing code... (no local types needed)
 
 const Index: React.FC = () => {
   const mapRef = useRef<OpenMapRef | null>(null);
@@ -45,6 +46,11 @@ const Index: React.FC = () => {
   const { manualSelectOnly, toChatAI, handleFeatureSelected } = navigationActions;
   const { getCurrentMarks, mapViewToLocation } = mapActions;
   const { getActivitiesList } = dataActions;
+  // 活动和手册数据由 hooks 提供（扁平化列表）
+  const activities = getActivitiesList();
+  const manualList = state.data.manualList || [];
+
+  // resolveLocationId moved to src/utils/location.ts
 
     // 创建选项卡数据
 
@@ -93,7 +99,7 @@ const Index: React.FC = () => {
           buildings={getCurrentMarks()}
           selectedCategory={map.categories[map.currentCategory] || "全部"}
           onBuildingSelect={(building, index) => {
-            const locationId = building.location_id ?? String(building.id) ?? building.locationId ?? index.toString();
+            const locationId = resolveLocationId(building, index);
             mapViewToLocation(locationId);
             // 关闭底部抽屉
             toggleCategoriesSheet(false);
@@ -108,27 +114,11 @@ const Index: React.FC = () => {
           isOpen={isActivitiesSheetShow}
           onClose={() => toggleActivitiesSheet(false)}
           title="校园活动"
-          buildings={getActivitiesList().length > 0 ? getActivitiesList().map((item: ActivityListItem, index: number) => ({
-            id: item.location_id ?? 
-                ('location_id' in item.raw ? item.raw.location_id : undefined) ?? 
-                ('locationId' in item.raw ? item.raw.locationId : undefined) ??
-                ('id' in item.raw ? String(item.raw.id) : undefined) ??
-                index.toString(),
-            name: item.title,
-            info: item.name || ('info' in item.raw ? item.raw.info : ('description' in item.raw ? item.raw.description : '')),
-            coordinates: [0, 0], // 活动坐标，可以根据实际需要调整
-            priority: 0,
-            functions: ["活动"],
-            location_id: item.location_id ?? 
-                        ('location_id' in item.raw ? item.raw.location_id : undefined) ?? 
-                        ('locationId' in item.raw ? item.raw.locationId : undefined) ??
-                        ('id' in item.raw ? String(item.raw.id) : undefined) ??
-                        index.toString()
-          })) : []}
+          buildings={activities.length ? activities : []}
           onBuildingSelect={(building) => {
             toggleActivitiesSheet(false);
-            const buildingId = typeof building.id === 'string' ? building.id : String(building.id);
-            handleFeatureSelected(buildingId);
+            const buildingId = resolveLocationId(building);
+            handleFeatureSelected(String(buildingId));
           }}
           selectedCategory="校园活动"
           emptyMessage="暂无活动数据"
@@ -141,20 +131,10 @@ const Index: React.FC = () => {
           isOpen={isManualShow}
           onClose={() => toggleManualSheet(false)}
           title="新生手册"
-          buildings={Object.keys(manualData).flatMap((groupKey, gi) =>
-            manualData[groupKey].map((item: ManualItem, idx: number) => ({
-              id: `${gi}-${idx}`,
-              name: item.name || item.title || "未命名手册",
-              info: `${groupKey}分类`,
-              coordinates: item.coordinates || [0, 0],
-              priority: item.priority || 0,
-              functions: [groupKey],
-              location_id: item.location_id || item.locationId || `manual-${gi}-${idx}`
-            }))
-          )}
+          buildings={manualList}
           onBuildingSelect={(building) => {
-            const buildingId = typeof building.id === 'string' ? building.id : String(building.id);
-            const [gi, idx] = buildingId.split('-').map(Number);
+            const buildingId = resolveLocationId(building);
+            const [gi, idx] = String(buildingId).split('-').map((v) => Number(v));
             manualSelectOnly(idx, gi);
           }}
           selectedCategory="新生手册"

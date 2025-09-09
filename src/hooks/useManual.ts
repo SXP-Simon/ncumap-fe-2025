@@ -53,11 +53,29 @@ export function useManual(mapRef: React.RefObject<OpenMapRef | null>, manualData
     }
   };
 
+  // 扁平化手册数据为列表，保留 group/index 便于定位
+  const manualList = (manualData)
+    ? Object.keys(manualData).flatMap((groupKey, gi) =>
+        (manualData[groupKey] || []).map((item: any, idx: number) => ({
+          id: item.location_id ?? item.id ?? `${gi}-${idx}`,
+          name: item.name || item.title || '未命名手册',
+          info: groupKey,
+          coordinates: item.coordinates || [0, 0],
+          priority: item.priority || 0,
+          functions: [groupKey],
+          location_id: item.location_id || item.locationId || String(item.id ?? `manual-${gi}-${idx}`),
+          __groupIndex: gi,
+          __itemIndex: idx,
+        }))
+      )
+    : [];
+
   return {
     manualGroupIndex,
     manualSelectedIndex,
     manualSelect,
     manualRedirect,
     manualSelectOnly,
+  manualList,
   };
 }

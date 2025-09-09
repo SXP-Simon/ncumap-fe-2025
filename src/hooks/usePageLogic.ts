@@ -59,6 +59,7 @@ export function usePageLogic(mapRef: React.RefObject<OpenMapRef | null>) {
     data: {
       manualData,
       activitiesData,
+      manualList: manual.manualList,
       manualGroupIndex: manual.manualGroupIndex,
       manualSelectedIndex: manual.manualSelectedIndex,
     },
