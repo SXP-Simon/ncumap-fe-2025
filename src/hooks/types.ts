@@ -1,5 +1,3 @@
-import type { OpenMapRef } from '@/components/OpenMap';
-
 // ============== 数据结构类型定义 ==============
 
 // 地图相关类型定义
@@ -41,12 +39,6 @@ export interface MapMark {
 
 export interface MapMarks {
   [category: string]: MapMark[];
-}
-
-export interface MapData {
-  marks: MapMarks | null;
-  categories: string[];
-  currentCategory: number;
 }
 
 // 活动相关类型定义
@@ -118,71 +110,4 @@ export interface ManualData {
   [categoryKey: string]: ManualItem[];
 }
 
-// 建筑详情类型定义
-export interface BuildingTip {
-  title: string;
-  content: string[];
-}
 
-export interface BuildingTips {
-  info?: BuildingTip[];
-  functions?: BuildingTip[];
-  offices?: BuildingTip[];
-  activities?: BuildingTip[];
-}
-
-export interface BuildingDetail {
-  id: string;
-  name: string;
-  info: string;
-  cover?: string;
-  functions?: string[];
-  offices?: string[];
-  activities?: string[];
-  imgs?: string[];
-  tips: BuildingTips;
-}
-
-// API 响应类型
-export interface ApiResponse<T> {
-  data: T;
-  code?: number;
-  message?: string;
-}
-
-// mincu 相关类型定义
-export interface MinCU {
-  openUrl?: (url: string) => void;
-  useAxiosInterceptors?: (axiosInstance: any) => void;
-}
-
-// ============== Hook 接口定义 ==============
-
-// 地图操作接口
-
-
-// UI 控制接口
-export interface UIActions {
-  showBottomSheet: (currentCategory: string) => void;
-  showManual: () => void;
-  bottomSheetSelect: (index: number) => void;
-  toggleCategoriesSheet: (show: boolean) => void;
-  toggleManualSheet: (show: boolean) => void;
-  toggleActivitiesSheet: (show: boolean) => void;
-  toggleSchoolCarDialog: (show: boolean) => void;
-  setSchoolCarNumber: (number: number) => void;
-  setBottomSheetSelected: (index: number) => void;
-}
-
-
-
-// 数据操作接口
-export interface DataActions {
-  getActivitiesList: () => ActivityUIItem[];
-}
-
-
-// Hook 参数类型
-export interface PageLogicParams {
-  mapRef: React.RefObject<OpenMapRef | null>;
-}
