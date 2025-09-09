@@ -8,7 +8,7 @@ import {
   FloatingActionButtons,
 } from "../components/ui";
 import { resolveLocationId } from "../utils/location";
-import { fetcher, baseURL } from "../hooks/fetcher";
+import { fetcher, baseURL } from "../services/api";
 import { useFetchData } from "../hooks/useFetchData";
 import { toChatAI } from "../utils/navigation";
 

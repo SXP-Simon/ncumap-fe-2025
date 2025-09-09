@@ -9,7 +9,7 @@ import {
   InformationCircleIcon,
   PhotoIcon
 } from '@heroicons/react/24/outline';
-import { fetcher, baseURL } from '../hooks/fetcher';
+import { fetcher, baseURL } from '../services/api';
 import { toChatAI } from '../utils/navigation';
 
 interface BuildingDetail {

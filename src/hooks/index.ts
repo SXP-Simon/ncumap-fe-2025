@@ -10,7 +10,7 @@ export type {
 } from './types';
 
 // 基础 hooks
-export { fetcher } from './fetcher';
+export { fetcher } from '../services/api';
 export { useFetchData } from './useFetchData';
 export { useUIState } from './useUIState';
 export { useMapState } from './useMapState';
