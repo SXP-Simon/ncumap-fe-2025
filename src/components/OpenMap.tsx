@@ -10,7 +10,7 @@ import { Select } from 'ol/interaction';
 import { click } from 'ol/events/condition';
 import { Projection } from 'ol/proj';
 import { mincu } from 'mincu-vanilla';
-import axios from 'axios';
+import { useFetchData } from '../hooks/useFetchData';
 import type { MapMarks, MapMark } from '../hooks/types';
 
 interface GeolocationPosition {
@@ -72,10 +72,7 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
   const marks = useRef<MapMarks | null>(null);
   const geoLocationMark = useRef<number[]>([]);
 
-  const fetcher = axios.create();
-  mincu.useAxiosInterceptors(fetcher);
-
-  const baseURL = 'https://ncumap-be.ncuos.com';
+  // axios interceptors are configured in hooks/fetcher; no local axios setup here
 
   const size = [256, 256];
   const extent = [0, 0, ...size];
@@ -318,33 +315,8 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
 
   mapInstanceRef.current = map;
 
-    // 初始化数据
-    const initializeData = async () => {
-      try {
-        locate();
-        try {
-          // 尝试从 API 获取数据
-          const response = await fetcher.get(baseURL + '/api/v1/campus/marks');
-          marks.current = response.data;
-        } catch (apiError) {
-          console.warn('API failed, using local data:', apiError);
-          // 备用方案：使用本地数据
-          const { fetchLocalData } = await import('../hooks/fetcher');
-          marks.current = await fetchLocalData('/data.json');
-        }
-        
-        if (marks.current) {
-          // 清空并重新填充categories
-          categories.current.length = 0;
-          categories.current.push('全部', '活动', ...Object.keys(marks.current));
-        }
-        updateMarkers();
-      } catch (err) {
-        console.error('Failed to load map data:', err);
-      }
-    };
-
-    initializeData();
+  // 初始化 UI 行为（定位等）
+  locate();
 
     return () => {
       // 清理交互与事件监听，销毁 map
@@ -370,6 +342,19 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
       viewRef.current = null;
     };
   }, []);
+
+  // 使用 useFetchData 提供的 campusMarks（会从 API 或本地 data.json 加载）
+  const { campusMarks } = useFetchData();
+
+  // 当 campusMarks 更新时，同步到内部 marks 并更新 categories/markers
+  useEffect(() => {
+    if (!campusMarks) return;
+    marks.current = campusMarks;
+    // 清空并重新填充categories
+    categories.current.length = 0;
+    categories.current.push('全部', '活动', ...Object.keys(marks.current));
+    updateMarkers();
+  }, [campusMarks]);
   // 注意：currentCategory 使用 ref 存储，若需要在分类变化时自动更新视图，请把 currentCategory 改为 state。
 
   useImperativeHandle(ref, () => ({
