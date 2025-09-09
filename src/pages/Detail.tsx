@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { useState, useEffect, type FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Spinner, Card, CardBody } from '@heroui/react';
 import { 
@@ -9,13 +9,80 @@ import {
   InformationCircleIcon,
   PhotoIcon
 } from '@heroicons/react/24/outline';
-import { useBuildingDetail } from '../hooks';
+import { fetcher, baseURL } from '../hooks/fetcher';
 import { toChatAI } from '../utils/navigation';
+
+interface BuildingDetail {
+  id: string;
+  name: string;
+  info: string;
+  cover?: string;
+  functions?: string[];
+  offices?: string[];
+  activities?: string[];
+  imgs?: string[];
+  tips: {
+    info?: Array<{
+      title: string;
+      content: string[];
+    }>;
+    functions?: Array<{
+      title: string;
+      content: string[];
+    }>;
+    offices?: Array<{
+      title: string;
+      content: string[];
+    }>;
+    activities?: Array<{
+      title: string;
+      content: string[];
+    }>;
+  };
+}
 
 const Detail: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { building, loading, error } = useBuildingDetail(id);
+  
+  const [building, setBuilding] = useState<BuildingDetail | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+
+    let mounted = true;
+    
+    const fetchBuildingDetail = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await fetcher.get(
+          `${baseURL}/api/v1/campus/locations/id?location_id=${id}`
+        );
+        
+        if (mounted) {
+          setBuilding(response.data);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : '获取建筑详情失败');
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchBuildingDetail();
+
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
 
   if (loading) {
     return (
@@ -108,10 +175,7 @@ const Detail: FC = () => {
         </div>
       </div>
 
-  {/* 内容区域 - 卡片布局 (响应式：窄屏垂直居中，宽屏横向多列) */}
   <div className="px-6 py-8 flex align-items-center flex-col gap-6 md:flex-row">
-        
-        {/* 信息提示卡片 */}
         {building.tips.info?.map((tip, index) => (
           <Card key={index} className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
             <CardBody className="p-6 h-full">
@@ -132,9 +196,8 @@ const Detail: FC = () => {
           </Card>
         ))}
 
-        {/* 基本职能卡片 */}
-  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50">
-            <CardBody className="p-6">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50">
+          <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-emerald-100/80 rounded-xl">
                 <BuildingOfficeIcon className="h-6 w-6 text-emerald-600" />
@@ -160,7 +223,6 @@ const Detail: FC = () => {
               )}
             </div>
 
-            {/* 职能提示卡片 */}
             {building.tips.functions?.map((tip, index) => (
               <div key={index} className="mt-6 p-4 bg-emerald-50/80 rounded-xl border border-emerald-100">
                 <h4 className="font-semibold text-emerald-800 mb-2">{tip.title}</h4>
@@ -174,8 +236,7 @@ const Detail: FC = () => {
           </CardBody>
         </Card>
 
-        {/* 学院办公点卡片 */}
-  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-purple-100/80 rounded-xl">
@@ -202,7 +263,6 @@ const Detail: FC = () => {
               )}
             </div>
 
-            {/* 办公点提示卡片 */}
             {building.tips.offices?.map((tip, index) => (
               <div key={index} className="mt-6 p-4 bg-purple-50/80 rounded-xl border border-purple-100">
                 <h4 className="font-semibold text-purple-800 mb-2">{tip.title}</h4>
@@ -216,8 +276,7 @@ const Detail: FC = () => {
           </CardBody>
         </Card>
 
-        {/* 其他活动卡片 */}
-  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-orange-100/80 rounded-xl">
@@ -244,7 +303,6 @@ const Detail: FC = () => {
               )}
             </div>
 
-            {/* 活动提示卡片 */}
             {building.tips.activities?.map((tip, index) => (
               <div key={index} className="mt-6 p-4 bg-orange-50/80 rounded-xl border border-orange-100">
                 <h4 className="font-semibold text-orange-800 mb-2">{tip.title}</h4>
@@ -258,7 +316,6 @@ const Detail: FC = () => {
           </CardBody>
         </Card>
 
-        {/* 图片展示卡片 */}
         {building.imgs && building.imgs.length > 0 && (
           <Card className="w-full max-w-3xl mx-auto md:w-[98%] lg:w-[64%] bg-white/60 backdrop-blur-xl border border-white/50 ">
             <CardBody className="p-6">
@@ -297,7 +354,6 @@ const Detail: FC = () => {
           </Card>
         )}
 
-        {/* 底部链接卡片 */}
         <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6 text-center">
             <p className="text-gray-700 mb-4">想了解更多校园信息？</p>
@@ -311,7 +367,6 @@ const Detail: FC = () => {
           </CardBody>
         </Card>
 
-        {/* 底部安全间距 */}
         <div className="h-8" />
       </div>
     </div>

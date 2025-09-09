@@ -1,60 +1,128 @@
-import { useRef, Suspense } from 'react';
+import { useRef, Suspense, useState, useEffect } from 'react';
 import { Spinner } from '@heroui/react';
 import OpenMap, { type OpenMapRef } from '../components/OpenMap';
-import { usePageLogic } from '../hooks';
 import { NavigationTabs, SchoolCarModal, GlassmorphismSelectingSheet, FloatingActionButtons } from '../components/ui';
 import { resolveLocationId } from '../utils/location';
-// ...existing code... (no local types needed)
+import { fetcher, baseURL } from '../hooks/fetcher';
+import { useFetchData } from '../hooks/useFetchData';
+import { toChatAI } from '../utils/navigation';
+
+import type { MapMarks } from '../hooks/types';
+
+interface MapState {
+  marks: MapMarks;
+  categories: string[];
+  currentCategory: number;
+}
+
+interface UIState {
+  isCategoriesSheetShow: boolean;
+  isManualShow: boolean;
+  isActivitiesSheetShow: boolean;
+  schoolCarDialog: boolean;
+  schoolCarNumber: number;
+}
 
 const Index: React.FC = () => {
   const mapRef = useRef<OpenMapRef | null>(null);
-  const {
-    mapActions,
-    uiActions,
-    navigationActions,
-    dataActions,
-    state
-  } = usePageLogic(mapRef);
-
-  // 解构状态，保持向后兼容
-  const {
-    map,
-    location,
-    ui: {
-      isCategoriesSheetShow,
-      isManualShow,
-      isActivitiesSheetShow,
-      schoolCarDialog,
-      schoolCarNumber
-    },
-    data: {
-      manualData
-    }
-  } = state;
-
-  // 解构动作，提供简化的访问方式
-  const { 
-    showBottomSheet, 
-    showManual, 
-    toggleCategoriesSheet,
-    toggleManualSheet,
-    toggleActivitiesSheet,
-    toggleSchoolCarDialog,
-    setSchoolCarNumber
-  } = uiActions;
   
-  const { manualSelectOnly, toChatAI, handleFeatureSelected } = navigationActions;
-  const { getCurrentMarks, mapViewToLocation } = mapActions;
-  const { getActivitiesList } = dataActions;
-  // 活动和手册数据由 hooks 提供（扁平化列表）
-  const activities = getActivitiesList();
-  const manualList = state.data.manualList || [];
+  const [map, setMap] = useState<MapState>({ marks: {}, categories: [], currentCategory: 0 });
+  const [location] = useState({ x: 115.804362, y: 28.663298 });
+  const [ui, setUI] = useState<UIState>({
+    isCategoriesSheetShow: false,
+    isManualShow: false,
+    isActivitiesSheetShow: false,
+    schoolCarDialog: false,
+    schoolCarNumber: 0
+  });
+  const [manualData, setManualData] = useState<any>(null);
+  const [activitiesData, setActivitiesData] = useState<any>(null);
+  const [manualList] = useState<any[]>([]);
 
-    // 创建选项卡数据
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [manualResponse, activitiesResponse] = await Promise.all([
+          fetcher.get(`${baseURL}/api/v1/campus/manual`),
+          fetcher.get(`${baseURL}/api/v1/campus/activities`)
+        ]);
+        setManualData(manualResponse.data);
+        setActivitiesData(activitiesResponse.data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const { campusMarks } = useFetchData();
+
+  useEffect(() => {
+    if (!campusMarks) return;
+    const categories = ['全部', '活动', ...Object.keys(campusMarks)];
+    setMap(prev => ({ ...prev, marks: campusMarks, categories }));
+  }, [campusMarks]);
+
+  const showBottomSheet = (index: string) => {
+    setMap(prev => ({ ...prev, currentCategory: Number(index) }));
+    setUI(prev => ({ ...prev, isCategoriesSheetShow: true }));
+  };
+
+  const showManual = () => setUI(prev => ({ ...prev, isManualShow: true }));
+  const toggleCategoriesSheet = (show: boolean) => setUI(prev => ({ ...prev, isCategoriesSheetShow: show }));
+  const toggleManualSheet = (show: boolean) => setUI(prev => ({ ...prev, isManualShow: show }));
+  const toggleActivitiesSheet = (show: boolean) => setUI(prev => ({ ...prev, isActivitiesSheetShow: show }));
+  const toggleSchoolCarDialog = (show: boolean) => setUI(prev => ({ ...prev, schoolCarDialog: show }));
+  const setSchoolCarNumber = (number: number) => setUI(prev => ({ ...prev, schoolCarNumber: number }));
+
+  const getCurrentMarks = () => {
+    if (!map.marks || Object.keys(map.marks).length === 0) return [];
+    const category = map.categories[map.currentCategory];
+    return map.currentCategory === 0 
+      ? Object.values(map.marks).flat()
+      : map.marks[category] || [];
+  };
+
+  const mapViewToLocation = (locationId: string) => {
+    const [groupIndex] = locationId.split('-').map(Number);
+    const category = map.categories[map.currentCategory];
+    const mark = map.marks[category]?.[groupIndex];
+    if (mark && mapRef.current && mark.coordinates) {
+      mapRef.current.viewTo(mark.coordinates);
+    }
+  };
+
+  const handleFeatureSelected = (locationId: string) => {
+    window.location.href = `/detail/${locationId}`;
+  };
+
+  const manualSelectOnly = (index: number, groupIndex: number) => {
+    if (manualData && manualData[groupIndex]) {
+      const item = manualData[groupIndex].items[index];
+      if (item && item.location_id) {
+        handleFeatureSelected(item.location_id);
+      }
+    }
+  };
+
+  const getActivitiesList = () => {
+    if (!activitiesData || !map.marks) return [];
+    return activitiesData.map((activity: any) => {
+      const allMarks = Object.values(map.marks).flat();
+      const mark = allMarks.find((m: any) => m.location_id === activity.location_id);
+      return {
+        ...activity,
+        name: activity.title,
+        category: '校园活动',
+        coordinates: mark?.coordinates
+      };
+    });
+  };
+
+  const activities = getActivitiesList();
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      {/* 上方选项卡 */}
       {map.marks && (
         <div className="absolute z-50 w-full">
           <NavigationTabs
@@ -65,9 +133,8 @@ const Index: React.FC = () => {
         </div>
       )}
 
-      {/* 主地图 */}
       <div className={`h-screen w-full transition-all duration-300 ${
-        isCategoriesSheetShow || isManualShow || isActivitiesSheetShow ? 'h-1/2' : ''
+        ui.isCategoriesSheetShow || ui.isManualShow || ui.isActivitiesSheetShow ? 'h-1/2' : ''
       }`}>
         <Suspense fallback={
           <div className="flex items-center justify-center h-full">
@@ -78,7 +145,6 @@ const Index: React.FC = () => {
         </Suspense>
       </div>
 
-      {/* 右侧悬浮按钮 */}
       {map.marks && (
         <FloatingActionButtons
           onLocationClick={() => mapRef.current?.locate()}
@@ -88,10 +154,9 @@ const Index: React.FC = () => {
         />
       )}
 
-      {/* 建筑选择菜单 - 深度玻璃拟物化 */}
-      {isCategoriesSheetShow && (
+      {ui.isCategoriesSheetShow && (
         <GlassmorphismSelectingSheet
-          isOpen={isCategoriesSheetShow}
+          isOpen={ui.isCategoriesSheetShow}
           onClose={() => toggleCategoriesSheet(false)}
           title="选择地点"
           buildings={getCurrentMarks()}
@@ -99,17 +164,15 @@ const Index: React.FC = () => {
           onBuildingSelect={(building, index) => {
             const locationId = resolveLocationId(building, index);
             mapViewToLocation(locationId);
-            // 关闭底部抽屉
             toggleCategoriesSheet(false);
           }}
           emptyMessage="该分类下暂无地点"
         />
       )}
 
-      {/* 活动列表抽屉 */}
-      {isActivitiesSheetShow && (
+      {ui.isActivitiesSheetShow && (
         <GlassmorphismSelectingSheet
-          isOpen={isActivitiesSheetShow}
+          isOpen={ui.isActivitiesSheetShow}
           onClose={() => toggleActivitiesSheet(false)}
           title="校园活动"
           buildings={activities.length ? activities : []}
@@ -123,10 +186,9 @@ const Index: React.FC = () => {
         />
       )}
 
-      {/* 新生手册抽屉 */}
-      {isManualShow && manualData && (
+      {ui.isManualShow && manualData && (
         <GlassmorphismSelectingSheet
-          isOpen={isManualShow}
+          isOpen={ui.isManualShow}
           onClose={() => toggleManualSheet(false)}
           title="新生手册"
           buildings={manualList}
@@ -140,11 +202,10 @@ const Index: React.FC = () => {
         />
       )}
 
-      {/* 校车对话框 */}
       <SchoolCarModal
-        isOpen={schoolCarDialog}
+        isOpen={ui.schoolCarDialog}
         onClose={() => toggleSchoolCarDialog(false)}
-        schoolCarNumber={schoolCarNumber.toString()}
+        schoolCarNumber={ui.schoolCarNumber.toString()}
         onSchoolCarNumberChange={(value: string) => setSchoolCarNumber(Number(value) || 0)}
         onConfirm={() => toggleSchoolCarDialog(false)}
       />
