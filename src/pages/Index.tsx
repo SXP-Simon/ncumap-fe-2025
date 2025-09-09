@@ -108,7 +108,7 @@ const Index: React.FC = () => {
   };
 
   const handleFeatureSelected = (locationId: string) => {
-    window.location.href = `/detail/${locationId}`;
+    window.location.href = `/${locationId}`;
   };
 
   const manualSelectOnly = (index: number, groupIndex: number) => {
