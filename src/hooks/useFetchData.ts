@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import fetcher, { baseURL, fetchLocalData } from '@/services/api';
-import type { ManualData, ActivitiesData } from './types';
-import type { MapMarks } from './types';
+import { fetchLocalData } from '@/services/api';
+import { getFreshmenManual } from '@/services/manual';
+import { getAllActivities } from '@/services/activity';
+import { getCampusMarks } from '@/services/campus';
+import type { ManualData, ActivitiesData, MapMarks } from './types';
 
 export function useFetchData() {
   const [manualData, setManualData] = useState<ManualData | null>(null);
@@ -15,9 +17,9 @@ export function useFetchData() {
         try {
           // 尝试从 API 获取数据
           const [manualResponse, activitiesResponse, marksResponse] = await Promise.all([
-            fetcher.get(baseURL + '/api/v1/freshmen/manual'),
-            fetcher.get(baseURL + '/api/v1/activity/all'),
-            fetcher.get(baseURL + '/api/v1/campus/marks')
+            getFreshmenManual(),
+            getAllActivities(),
+            getCampusMarks()
           ]);
           if (!mounted) return;
           setManualData(manualResponse.data);

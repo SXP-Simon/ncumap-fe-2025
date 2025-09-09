@@ -8,7 +8,8 @@ import {
   FloatingActionButtons,
 } from "@/components/ui";
 import { resolveLocationId } from "@/utils/location";
-import { fetcher, baseURL } from "@/services/api";
+import { getCampusManual } from "@/services/manual";
+import { getCampusActivities } from "@/services/activity";
 import { useFetchData } from "@/hooks/useFetchData";
 import { toChatAI } from "@/utils/navigation";
 
@@ -52,8 +53,8 @@ const Index: React.FC = () => {
     const fetchData = async () => {
       try {
         const [manualResponse, activitiesResponse] = await Promise.all([
-          fetcher.get(`${baseURL}/api/v1/campus/manual`),
-          fetcher.get(`${baseURL}/api/v1/campus/activities`),
+          getCampusManual(),
+          getCampusActivities(),
         ]);
         setManualData(manualResponse.data);
         setActivitiesData(activitiesResponse.data);

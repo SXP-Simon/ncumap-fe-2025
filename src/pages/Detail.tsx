@@ -9,7 +9,7 @@ import {
   InformationCircleIcon,
   PhotoIcon
 } from '@heroicons/react/24/outline';
-import { fetcher, baseURL } from '@/services/api';
+import { getLocationById } from '@/services/campus';
 import { toChatAI } from '@/utils/navigation';
 
 interface BuildingDetail {
@@ -59,9 +59,7 @@ const Detail: FC = () => {
       setError(null);
       
       try {
-        const response = await fetcher.get(
-          `${baseURL}/api/v1/campus/locations/id?location_id=${id}`
-        );
+        const response = await getLocationById(id);
         
         if (mounted) {
           setBuilding(response.data);
