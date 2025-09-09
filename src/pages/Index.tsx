@@ -50,8 +50,6 @@ const Index: React.FC = () => {
   const activities = getActivitiesList();
   const manualList = state.data.manualList || [];
 
-  // resolveLocationId moved to src/utils/location.ts
-
     // 创建选项卡数据
 
   return (

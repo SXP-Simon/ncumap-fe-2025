@@ -19,7 +19,7 @@ const Detail: FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center align-items-center h-screen">
         <Spinner size="lg" color="primary" />
       </div>
     );
@@ -31,7 +31,7 @@ const Detail: FC = () => {
         <Button 
           variant="light"
           color="primary"
-          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          startContent={<ChevronLeftIcon className="h-5 w-5 rounded-2xl" />}
           onPress={() => navigate(-1)}
           className="mb-5"
         >
@@ -56,7 +56,7 @@ const Detail: FC = () => {
         <Button 
           variant="light"
           color="primary"
-          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          startContent={<ChevronLeftIcon className="h-5 w-5 rounded-2xl" />}
           onPress={() => navigate(-1)}
           className="mb-5"
         >
@@ -75,16 +75,15 @@ const Detail: FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* 顶部返回按钮 - 玻璃质感 */}
-      <div className="absolute top-6 left-6 z-50">
+    <div className="flex justify-center align-items-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 h-screen">
+      <div className="absolute top-6 left-6 z-50 rounded-2xl">
         <Button 
           isIconOnly
           variant="light"
-          className="bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30 shadow-xl transition-all duration-300"
+          className="bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30  transition-all duration-300 rounded-xl"
           onPress={() => navigate(-1)}
         >
-          <ChevronLeftIcon className="h-5 w-5 text-gray-700" />
+          <ChevronLeftIcon className="h-5 w-5 text-gray-700 rounded-2xl" />
         </Button>
       </div>
 
@@ -113,12 +112,12 @@ const Detail: FC = () => {
         </div>
       </div>
 
-      {/* 内容区域 - 卡片布局 */}
-      <div className="px-6 py-8 space-y-6">
+  {/* 内容区域 - 卡片布局 (响应式：窄屏垂直居中，宽屏横向多列) */}
+  <div className="px-6 py-8 flex flex-col items-center gap-6 md:flex-row md:flex-wrap md:items-start md:justify-center">
         
         {/* 信息提示卡片 */}
         {building.tips.info?.map((tip, index) => (
-          <Card key={index} className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-xl">
+          <Card key={index} className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
             <CardBody className="p-6">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100/80 rounded-xl">
@@ -138,8 +137,8 @@ const Detail: FC = () => {
         ))}
 
         {/* 基本职能卡片 */}
-        <Card className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-xl">
-          <CardBody className="p-6">
+  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50">
+          <CardBody className="p-6 h">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-emerald-100/80 rounded-xl">
                 <BuildingOfficeIcon className="h-6 w-6 text-emerald-600" />
@@ -180,7 +179,7 @@ const Detail: FC = () => {
         </Card>
 
         {/* 学院办公点卡片 */}
-        <Card className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-xl">
+  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-purple-100/80 rounded-xl">
@@ -222,7 +221,7 @@ const Detail: FC = () => {
         </Card>
 
         {/* 其他活动卡片 */}
-        <Card className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-xl">
+  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-orange-100/80 rounded-xl">
@@ -265,7 +264,7 @@ const Detail: FC = () => {
 
         {/* 图片展示卡片 */}
         {building.imgs && building.imgs.length > 0 && (
-          <Card className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-xl">
+          <Card className="w-full max-w-3xl mx-auto md:w-[98%] lg:w-[64%] bg-white/60 backdrop-blur-xl border border-white/50 ">
             <CardBody className="p-6">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="p-3 bg-pink-100/80 rounded-xl">
@@ -303,13 +302,13 @@ const Detail: FC = () => {
         )}
 
         {/* 底部链接卡片 */}
-        <Card className="bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 shadow-xl">
+  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6 text-center">
             <p className="text-gray-700 mb-4">想了解更多校园信息？</p>
             <Button
               onPress={toChatAI}
               variant="shadow"
-              className="bg-[#39C5BB] hover:bg-[#2fb3a8] text-white font-semibold transition-colors duration-300"
+              className="bg-[#39C5BB] hover:bg-[#2fb3a8] text-white font-semibold transition-colors duration-300 rounded-2xl"
             >
               进入漫游指北
             </Button>
