@@ -76,7 +76,7 @@ const Detail: FC = () => {
 
   return (
     <div className="relative justify-center items-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="absolute top-6 left-6 z-50 rounded-2xl">
+  <div className="absolute top-6 left-6 z-50 rounded-2xl">
         <Button 
           isIconOnly
           variant="light"
@@ -134,7 +134,7 @@ const Detail: FC = () => {
 
         {/* 基本职能卡片 */}
   <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50">
-          <CardBody className="p-6 h">
+            <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-emerald-100/80 rounded-xl">
                 <BuildingOfficeIcon className="h-6 w-6 text-emerald-600" />
