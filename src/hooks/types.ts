@@ -1,7 +1,4 @@
-import type { OpenMapRef } from '../components/OpenMap';
-import type { useMapState } from './useMapState';
-import type { useFetchData } from './useFetchData';
-import type { useManual } from './useManual';
+import type { OpenMapRef } from '@/components/OpenMap';
 
 // ============== 数据结构类型定义 ==============
 
@@ -162,12 +159,7 @@ export interface MinCU {
 // ============== Hook 接口定义 ==============
 
 // 地图操作接口
-export interface MapActions {
-  setMap: ReturnType<typeof useMapState>['setMap'];
-  updateFromRef: ReturnType<typeof useMapState>['updateFromRef'];
-  getCurrentMarks: ReturnType<typeof useMapState>['getCurrentMarks'];
-  mapViewToLocation: (locationId: string) => void;
-}
+
 
 // UI 控制接口
 export interface UIActions {
@@ -182,64 +174,13 @@ export interface UIActions {
   setBottomSheetSelected: (index: number) => void;
 }
 
-// 导航操作接口
-export interface NavigationActions {
-  manualRedirect: ReturnType<typeof useManual>['manualRedirect'];
-  manualSelect: ReturnType<typeof useManual>['manualSelect'];
-  manualSelectOnly: ReturnType<typeof useManual>['manualSelectOnly'];
-  toChatAI: () => void;
-  handleFeatureSelected: (locationId: string) => void;
-}
+
 
 // 数据操作接口
 export interface DataActions {
   getActivitiesList: () => ActivityUIItem[];
 }
 
-// 页面逻辑动作集合
-export interface PageLogicActions {
-  mapActions: MapActions;
-  uiActions: UIActions;
-  navigationActions: NavigationActions;
-  dataActions: DataActions;
-}
-
-// 页面状态接口
-export interface PageLogicState {
-  // 地图状态
-  map: ReturnType<typeof useMapState>['map'];
-  location: { x: number; y: number };
-  
-  // UI 状态
-  ui: {
-    isCategoriesSheetShow: boolean;
-    isManualShow: boolean;
-    isActivitiesSheetShow: boolean;
-    schoolCarDialog: boolean;
-    schoolCarNumber: number;
-    bottomSheetSelected: number;
-  };
-
-  // 数据状态
-  data: {
-    manualData: ReturnType<typeof useFetchData>['manualData'];
-    activitiesData: ReturnType<typeof useFetchData>['activitiesData'];
-      // 扁平化的手册列表，供页面直接渲染
-      manualList?: Array<{
-        id: string | number;
-        name: string;
-        info: string;
-        coordinates: [number, number];
-        priority: number;
-        functions: string[];
-        location_id: string;
-        __groupIndex: number;
-        __itemIndex: number;
-      }>;
-    manualGroupIndex: ReturnType<typeof useManual>['manualGroupIndex'];
-    manualSelectedIndex: ReturnType<typeof useManual>['manualSelectedIndex'];
-  };
-}
 
 // Hook 参数类型
 export interface PageLogicParams {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import fetcher, { baseURL, fetchLocalData } from '../services/api';
+import fetcher, { baseURL, fetchLocalData } from '@/services/api';
 import type { ManualData, ActivitiesData } from './types';
 import type { MapMarks } from './types';
 

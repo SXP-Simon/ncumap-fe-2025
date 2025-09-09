@@ -1,4 +1,4 @@
-import type { UIListItem, ManualListItem, ActivityUIItem, MapMark } from '../hooks/types';
+import type { UIListItem, ManualListItem, ActivityUIItem, MapMark } from '@/hooks/types';
 
 /**
  * 返回稳定的 location id（string）

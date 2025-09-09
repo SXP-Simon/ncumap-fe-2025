@@ -1,18 +1,18 @@
 import { useRef, Suspense, useState, useEffect } from "react";
 import { Spinner } from "@heroui/react";
-import OpenMap, { type OpenMapRef } from "../components/OpenMap";
+import OpenMap, { type OpenMapRef } from "@/components/OpenMap";
 import {
   NavigationTabs,
   SchoolCarModal,
   GlassmorphismSelectingSheet,
   FloatingActionButtons,
-} from "../components/ui";
-import { resolveLocationId } from "../utils/location";
-import { fetcher, baseURL } from "../services/api";
-import { useFetchData } from "../hooks/useFetchData";
-import { toChatAI } from "../utils/navigation";
+} from "@/components/ui";
+import { resolveLocationId } from "@/utils/location";
+import { fetcher, baseURL } from "@/services/api";
+import { useFetchData } from "@/hooks/useFetchData";
+import { toChatAI } from "@/utils/navigation";
 
-import type { MapMarks } from "../hooks/types";
+import type { MapMarks } from "@/hooks/types";
 
 interface MapState {
   marks: MapMarks;

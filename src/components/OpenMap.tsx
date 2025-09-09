@@ -10,8 +10,8 @@ import { Select } from 'ol/interaction';
 import { click } from 'ol/events/condition';
 import { Projection } from 'ol/proj';
 import { mincu } from 'mincu-vanilla';
-import { useFetchData } from '../hooks/useFetchData';
-import type { MapMarks, MapMark } from '../hooks/types';
+import { useFetchData } from '@/hooks/useFetchData';
+import type { MapMarks, MapMark } from '@/hooks/types';
 
 interface GeolocationPosition {
   lng: number;
