@@ -66,7 +66,7 @@ const Detail: FC = () => {
           <CardBody>
             <div className="flex items-center">
               <ExclamationTriangleIcon className="h-5 w-5 text-warning-500 mr-2" />
-              <h3 className="text-sm font-medium text-warning-800">未找到相关信息</h3>
+              <h3 className="text-sm font-medium text-warning-800">加载中...</h3>
             </div>
           </CardBody>
         </Card>
@@ -75,7 +75,7 @@ const Detail: FC = () => {
   }
 
   return (
-    <div className="flex justify-center align-items-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 h-screen">
+    <div className="relative justify-center items-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="absolute top-6 left-6 z-50 rounded-2xl">
         <Button 
           isIconOnly
@@ -87,38 +87,34 @@ const Detail: FC = () => {
         </Button>
       </div>
 
-      {/* 头部封面区域 - 渐变玻璃遮罩 */}
-      <div className="relative h-80 overflow-hidden">
+      <div className="relative h-80 md:h-96 lg:h-[40vh] w-full overflow-hidden">
         <div
-          className="h-full bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${building.cover || '/map-cut.png'})`
           }}
-        >
-          {/* 渐变遮罩层 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          
-          {/* 标题区域 - 玻璃质感容器 */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl">
-              <h1 className="text-white text-3xl font-bold mb-2 drop-shadow-lg">
-                {building.name}
-              </h1>
-              <p className="text-white/90 text-base leading-relaxed drop-shadow">
-                {building.info}
-              </p>
-            </div>
+        />
+
+        {/* 标题区域 - 玻璃质感容器，居中显示在底部 */}
+        <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-6 px-4">
+          <div className="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl">
+            <h1 className="text-white text-3xl font-bold mb-2 drop-shadow-lg">
+              {building.name}
+            </h1>
+            <p className="text-white/90 text-base leading-relaxed drop-shadow">
+              {building.info}
+            </p>
           </div>
         </div>
       </div>
 
   {/* 内容区域 - 卡片布局 (响应式：窄屏垂直居中，宽屏横向多列) */}
-  <div className="px-6 py-8 flex flex-col items-center gap-6 md:flex-row md:flex-wrap md:items-start md:justify-center">
+  <div className="px-6 py-8 flex align-items-center flex-col gap-6 md:flex-row">
         
         {/* 信息提示卡片 */}
         {building.tips.info?.map((tip, index) => (
           <Card key={index} className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
-            <CardBody className="p-6">
+            <CardBody className="p-6 h-full">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100/80 rounded-xl">
                   <InformationCircleIcon className="h-6 w-6 text-blue-600" />
@@ -302,7 +298,7 @@ const Detail: FC = () => {
         )}
 
         {/* 底部链接卡片 */}
-  <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 ">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 ">
           <CardBody className="p-6 text-center">
             <p className="text-gray-700 mb-4">想了解更多校园信息？</p>
             <Button
