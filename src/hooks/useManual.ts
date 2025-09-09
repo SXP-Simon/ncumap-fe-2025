@@ -19,8 +19,8 @@ export function useManual(mapRef: React.RefObject<OpenMapRef | null>, manualData
     const current = manualData && manualData[key] && manualData[key][itemIndex];
     if (mapRef.current && current) {
       if (current.coordinates) mapRef.current.viewTo(current.coordinates);
-      const markZoom = current.priority ?? 3;
-      mapRef.current.zoomTo(3 > markZoom ? 3 : markZoom);
+  const markZoom = current.priority ?? 3;
+  mapRef.current.zoomTo(Math.max(3, markZoom));
     }
   };
 
@@ -48,8 +48,8 @@ export function useManual(mapRef: React.RefObject<OpenMapRef | null>, manualData
     if (current && mapRef.current) {
       // 只跳转到地图位置
       if (current.coordinates) mapRef.current.viewTo(current.coordinates);
-      const markZoom = current.priority ?? 3;
-      mapRef.current.zoomTo(3 > markZoom ? 3 : markZoom);
+  const markZoom = current.priority ?? 3;
+  mapRef.current.zoomTo(Math.max(3, markZoom));
     }
   };
 

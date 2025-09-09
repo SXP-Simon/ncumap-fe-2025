@@ -33,8 +33,8 @@ export function useMapActions(
     
     if (targetMark && targetMark.coordinates) {
       mapRef.current.viewTo(targetMark.coordinates);
-      const markZoom = targetMark.priority ?? 3;
-      mapRef.current.zoomTo(3 > markZoom ? 3 : markZoom);
+  const markZoom = targetMark.priority ?? 3;
+  mapRef.current.zoomTo(Math.max(3, markZoom));
     }
   };
 
