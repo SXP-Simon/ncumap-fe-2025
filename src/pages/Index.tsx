@@ -15,36 +15,18 @@ import { toChatAI } from "@/utils/navigation";
 
 import type { MapMarks } from "@/hooks/types";
 
-interface MapState {
-  marks: MapMarks;
-  categories: string[];
-  currentCategory: number;
-}
-
-interface UIState {
-  isCategoriesSheetShow: boolean;
-  isManualShow: boolean;
-  isActivitiesSheetShow: boolean;
-  schoolCarDialog: boolean;
-  schoolCarNumber: number;
-}
-
 const Index: React.FC = () => {
   const mapRef = useRef<OpenMapRef | null>(null);
 
-  const [map, setMap] = useState<MapState>({
-    marks: {},
-    categories: [],
-    currentCategory: 0,
-  });
+  const [marks, setMarks] = useState<MapMarks>({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const [currentCategory, setCurrentCategory] = useState(0);
   const [location] = useState({ x: 115.804362, y: 28.663298 });
-  const [ui, setUI] = useState<UIState>({
-    isCategoriesSheetShow: false,
-    isManualShow: false,
-    isActivitiesSheetShow: false,
-    schoolCarDialog: false,
-    schoolCarNumber: 0,
-  });
+  const [isCategoriesSheetShow, setIsCategoriesSheetShow] = useState(false);
+  const [isManualShow, setIsManualShow] = useState(false);
+  const [isActivitiesSheetShow, setIsActivitiesSheetShow] = useState(false);
+  const [schoolCarDialog, setSchoolCarDialog] = useState(false);
+  const [schoolCarNumber, setSchoolCarNumber] = useState(0);
   const [manualData, setManualData] = useState<any>(null);
   const [activitiesData, setActivitiesData] = useState<any>(null);
   const [manualList] = useState<any[]>([]);
@@ -69,39 +51,34 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     if (!campusMarks) return;
-    const categories = ["全部", "活动", ...Object.keys(campusMarks)];
-    setMap((prev) => ({ ...prev, marks: campusMarks, categories }));
+    const newCategories = ["全部", "活动", ...Object.keys(campusMarks)];
+    setMarks(campusMarks);
+    setCategories(newCategories);
   }, [campusMarks]);
 
   const showBottomSheet = (index: string) => {
-    setMap((prev) => ({ ...prev, currentCategory: Number(index) }));
-    setUI((prev) => ({ ...prev, isCategoriesSheetShow: true }));
+    setCurrentCategory(Number(index));
+    setIsCategoriesSheetShow(true);
   };
 
-  const showManual = () => setUI((prev) => ({ ...prev, isManualShow: true }));
-  const toggleCategoriesSheet = (show: boolean) =>
-    setUI((prev) => ({ ...prev, isCategoriesSheetShow: show }));
-  const toggleManualSheet = (show: boolean) =>
-    setUI((prev) => ({ ...prev, isManualShow: show }));
-  const toggleActivitiesSheet = (show: boolean) =>
-    setUI((prev) => ({ ...prev, isActivitiesSheetShow: show }));
-  const toggleSchoolCarDialog = (show: boolean) =>
-    setUI((prev) => ({ ...prev, schoolCarDialog: show }));
-  const setSchoolCarNumber = (number: number) =>
-    setUI((prev) => ({ ...prev, schoolCarNumber: number }));
+  const showManual = () => setIsManualShow(true);
+  const toggleCategoriesSheet = (show: boolean) => setIsCategoriesSheetShow(show);
+  const toggleManualSheet = (show: boolean) => setIsManualShow(show);
+  const toggleActivitiesSheet = (show: boolean) => setIsActivitiesSheetShow(show);
+  const toggleSchoolCarDialog = (show: boolean) => setSchoolCarDialog(show);
 
   const getCurrentMarks = () => {
-    if (!map.marks || Object.keys(map.marks).length === 0) return [];
-    const category = map.categories[map.currentCategory];
-    return map.currentCategory === 0
-      ? Object.values(map.marks).flat()
-      : map.marks[category] || [];
+    if (!marks || Object.keys(marks).length === 0) return [];
+    const category = categories[currentCategory];
+    return currentCategory === 0
+      ? Object.values(marks).flat()
+      : marks[category] || [];
   };
 
   const mapViewToLocation = (locationId: string) => {
     const [groupIndex] = locationId.split("-").map(Number);
-    const category = map.categories[map.currentCategory];
-    const mark = map.marks[category]?.[groupIndex];
+    const category = categories[currentCategory];
+    const mark = marks[category]?.[groupIndex];
     if (mark && mapRef.current && mark.coordinates) {
       mapRef.current.viewTo(mark.coordinates);
     }
@@ -121,9 +98,9 @@ const Index: React.FC = () => {
   };
 
   const getActivitiesList = () => {
-    if (!activitiesData || !map.marks) return [];
+    if (!activitiesData || !marks) return [];
     return activitiesData.map((activity: any) => {
-      const allMarks = Object.values(map.marks).flat();
+      const allMarks = Object.values(marks).flat();
       const mark = allMarks.find(
         (m: any) => m.location_id === activity.location_id
       );
@@ -140,11 +117,11 @@ const Index: React.FC = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      {map.marks && (
+      {marks && (
         <div className="absolute z-50 w-full">
           <NavigationTabs
-            categories={map.categories}
-            selectedIndex={map.currentCategory}
+            categories={categories}
+            selectedIndex={currentCategory}
             onSelectionChange={(index) => showBottomSheet(index.toString())}
           />
         </div>
@@ -152,9 +129,9 @@ const Index: React.FC = () => {
 
       <div
         className={`h-screen w-full transition-all duration-300 ${
-          ui.isCategoriesSheetShow ||
-          ui.isManualShow ||
-          ui.isActivitiesSheetShow
+          isCategoriesSheetShow ||
+          isManualShow ||
+          isActivitiesSheetShow
             ? "h-1/2"
             : ""
         }`}
@@ -175,7 +152,7 @@ const Index: React.FC = () => {
         </Suspense>
       </div>
 
-      {map.marks && (
+      {marks && (
         <FloatingActionButtons
           onLocationClick={() => mapRef.current?.locate()}
           onManualClick={showManual}
@@ -184,13 +161,13 @@ const Index: React.FC = () => {
         />
       )}
 
-      {ui.isCategoriesSheetShow && (
+      {isCategoriesSheetShow && (
         <GlassmorphismSelectingSheet
-          isOpen={ui.isCategoriesSheetShow}
+          isOpen={isCategoriesSheetShow}
           onClose={() => toggleCategoriesSheet(false)}
           title="选择地点"
           buildings={getCurrentMarks()}
-          selectedCategory={map.categories[map.currentCategory] || "全部"}
+          selectedCategory={categories[currentCategory] || "全部"}
           onBuildingSelect={(building, index) => {
             const locationId = resolveLocationId(building, index);
             mapViewToLocation(locationId);
@@ -200,9 +177,9 @@ const Index: React.FC = () => {
         />
       )}
 
-      {ui.isActivitiesSheetShow && (
+      {isActivitiesSheetShow && (
         <GlassmorphismSelectingSheet
-          isOpen={ui.isActivitiesSheetShow}
+          isOpen={isActivitiesSheetShow}
           onClose={() => toggleActivitiesSheet(false)}
           title="校园活动"
           buildings={activities.length ? activities : []}
@@ -216,9 +193,9 @@ const Index: React.FC = () => {
         />
       )}
 
-      {ui.isManualShow && manualData && (
+      {isManualShow && manualData && (
         <GlassmorphismSelectingSheet
-          isOpen={ui.isManualShow}
+          isOpen={isManualShow}
           onClose={() => toggleManualSheet(false)}
           title="新生手册"
           buildings={manualList}
@@ -235,9 +212,9 @@ const Index: React.FC = () => {
       )}
 
       <SchoolCarModal
-        isOpen={ui.schoolCarDialog}
+        isOpen={schoolCarDialog}
         onClose={() => toggleSchoolCarDialog(false)}
-        schoolCarNumber={ui.schoolCarNumber.toString()}
+        schoolCarNumber={schoolCarNumber.toString()}
         onSchoolCarNumberChange={(value: string) =>
           setSchoolCarNumber(Number(value) || 0)
         }
