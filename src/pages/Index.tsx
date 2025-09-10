@@ -22,7 +22,9 @@ const Index: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [currentCategory, setCurrentCategory] = useState(0);
   const [location] = useState({ x: 115.804362, y: 28.663298 });
-  const [drawerType, setDrawerType] = useState<'location' | 'activity' | 'manual' | null>(null);
+  const [drawerType, setDrawerType] = useState<
+    "location" | "activity" | "manual" | null
+  >(null);
   const [schoolCarDialog, setSchoolCarDialog] = useState(false);
   const [schoolCarNumber, setSchoolCarNumber] = useState(0);
   const [manualData, setManualData] = useState<any>(null);
@@ -53,55 +55,61 @@ const Index: React.FC = () => {
     fetchData();
   }, []);
 
-  const getDrawerTitle = (type: 'location' | 'activity' | 'manual' | null): string => {
+  const getDrawerTitle = (
+    type: "location" | "activity" | "manual" | null
+  ): string => {
     switch (type) {
-      case 'location':
-        return '选择地点';
-      case 'activity':
-        return '校园活动';
-      case 'manual':
-        return '新生手册';
-      default:
-        return '';
-    }
-  };
-
-  const getDrawerBuildings = (type: 'location' | 'activity' | 'manual' | null) => {
-    switch (type) {
-      case 'location':
-        return getCurrentMarks();
-      case 'activity':
-        return activities.length ? activities : [];
-      case 'manual':
-        return manualList;
-      default:
-        return [];
-    }
-  };
-
-  const getDrawerCategory = (type: 'location' | 'activity' | 'manual' | null): string => {
-    switch (type) {
-      case 'location':
-        return categories[currentCategory] || "全部";
-      case 'activity':
+      case "location":
+        return "选择地点";
+      case "activity":
         return "校园活动";
-      case 'manual':
+      case "manual":
         return "新生手册";
       default:
         return "";
     }
   };
 
-  const toggleDrawer = (type: 'location' | 'activity' | 'manual' | null) => {
+  const getDrawerBuildings = (
+    type: "location" | "activity" | "manual" | null
+  ) => {
+    switch (type) {
+      case "location":
+        return getCurrentMarks();
+      case "activity":
+        return activities.length ? activities : [];
+      case "manual":
+        return manualList;
+      default:
+        return [];
+    }
+  };
+
+  const getDrawerCategory = (
+    type: "location" | "activity" | "manual" | null
+  ): string => {
+    switch (type) {
+      case "location":
+        return categories[currentCategory] || "全部";
+      case "activity":
+        return "校园活动";
+      case "manual":
+        return "新生手册";
+      default:
+        return "";
+    }
+  };
+
+  const toggleDrawer = (type: "location" | "activity" | "manual" | null) => {
     setDrawerType(type);
   };
 
   const showBottomSheet = (index: string) => {
     setCurrentCategory(Number(index));
-    toggleDrawer('location');
+    toggleDrawer("location");
   };
 
-  const showManual = () => toggleDrawer('manual');
+  const showManual = () => toggleDrawer("manual");
   const toggleSchoolCarDialog = (show: boolean) => setSchoolCarDialog(show);
 
   const getCurrentMarks = () => {
@@ -125,21 +133,27 @@ const Index: React.FC = () => {
     window.location.href = `/${locationId}`;
   };
 
-  const handleDrawerItemSelect = (type: 'location' | 'activity' | 'manual', building: any, index: number) => {
+  const handleDrawerItemSelect = (
+    type: "location" | "activity" | "manual",
+    building: any,
+    index: number
+  ) => {
     switch (type) {
-      case 'location':
+      case "location":
         const locationId = resolveLocationId(building, index);
         mapViewToLocation(locationId);
         toggleDrawer(null);
         break;
-      case 'activity':
+      case "activity":
         const activityId = resolveLocationId(building);
         handleFeatureSelected(String(activityId));
         toggleDrawer(null);
         break;
-      case 'manual':
+      case "manual":
         const buildingId = resolveLocationId(building);
-        const [gi, idx] = String(buildingId).split("-").map((v) => Number(v));
+        const [gi, idx] = String(buildingId)
+          .split("-")
+          .map((v) => Number(v));
         if (manualData && manualData[gi]) {
           const item = manualData[gi].items[idx];
           if (item && item.location_id) {
@@ -171,48 +185,34 @@ const Index: React.FC = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      {marks && (
-        <div className="absolute z-50 w-full">
-          <NavigationTabs
-            categories={categories}
-            selectedIndex={currentCategory}
-            onSelectionChange={(index) => showBottomSheet(index.toString())}
-          />
-        </div>
-      )}
+      <div className="absolute z-50 w-full">
+        <NavigationTabs
+          categories={categories}
+          selectedIndex={currentCategory}
+          onSelectionChange={(index) => showBottomSheet(index.toString())}
+        />
+      </div>
 
       <div
         className={`h-screen w-full transition-all duration-300 ${
-          drawerType !== null
-            ? "h-1/2"
-            : ""
+          drawerType !== null ? "h-1/2" : ""
         }`}
       >
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center h-full">
-              <Spinner size="lg" color="primary" />
-            </div>
-          }
-        >
-          <OpenMap
-            ref={mapRef}
-            x={location.x}
-            y={location.y}
-            campusMarks={marks}
-            onFeatureSelected={handleFeatureSelected}
-          />
-        </Suspense>
+        <OpenMap
+          ref={mapRef}
+          x={location.x}
+          y={location.y}
+          campusMarks={marks}
+          onFeatureSelected={handleFeatureSelected}
+        />
       </div>
 
-      {marks && (
-        <FloatingActionButtons
-          onLocationClick={() => mapRef.current?.locate()}
-          onManualClick={showManual}
-          onSchoolCarClick={() => toggleSchoolCarDialog(true)}
-          onChatClick={toChatAI}
-        />
-      )}
+      <FloatingActionButtons
+        onLocationClick={() => mapRef.current?.locate()}
+        onManualClick={showManual}
+        onSchoolCarClick={() => toggleSchoolCarDialog(true)}
+        onChatClick={toChatAI}
+      />
 
       <CategoriesDrawer
         isOpen={drawerType !== null}
@@ -220,10 +220,10 @@ const Index: React.FC = () => {
         title={getDrawerTitle(drawerType)}
         buildings={getDrawerBuildings(drawerType)}
         selectedCategory={getDrawerCategory(drawerType)}
-        onBuildingSelect={(building, index) => 
+        onBuildingSelect={(building, index) =>
           drawerType && handleDrawerItemSelect(drawerType, building, index)
         }
-        type={drawerType || 'location'}
+        type={drawerType || "location"}
       />
 
       <SchoolCarModal
