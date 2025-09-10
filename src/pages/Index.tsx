@@ -1,5 +1,4 @@
-import { useRef, Suspense, useState, useEffect } from "react";
-import { Spinner } from "@heroui/react";
+import { useRef, useState, useEffect } from "react";
 import OpenMap, { type OpenMapRef } from "@/components/OpenMap";
 import {
   NavigationTabs,
@@ -105,8 +104,9 @@ const Index: React.FC = () => {
   };
 
   const showBottomSheet = (index: string) => {
-    setCurrentCategory(Number(index));
-    toggleDrawer("location");
+    const categoryIndex = Number(index);
+    setCurrentCategory(categoryIndex);
+    toggleDrawer(categoryIndex === 1 ? "activity" : "location");
   };
 
   const showManual = () => toggleDrawer("manual");
