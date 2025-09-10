@@ -121,10 +121,10 @@ const Index: React.FC = () => {
   };
 
   const mapViewToLocation = (locationId: string) => {
-    const [groupIndex] = locationId.split("-").map(Number);
-    const category = categories[currentCategory];
-    const mark = marks[category]?.[groupIndex];
-    if (mark && mapRef.current && mark.coordinates) {
+    const allMarks = Object.values(marks).flat();
+    const mark = allMarks.find((mark) => mark.location_id === locationId);
+
+    if (mark?.coordinates && mapRef.current) {
       mapRef.current.viewTo(mark.coordinates);
     }
   };
