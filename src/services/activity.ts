@@ -1,5 +1,5 @@
 import { fetcher, baseURL } from './api';
-import type { ActivitiesData } from '@/hooks/types';
+import type { ActivitiesData } from '@/types/activity';
 
 /**
  * 获取所有活动数据
@@ -9,8 +9,10 @@ export const getAllActivities = () => {
 };
 
 /**
- * 获取校园活动数据
+ * 获取特定活动详情
  */
-export const getCampusActivities = () => {
-  return fetcher.get<ActivitiesData>(`${baseURL}/api/v1/campus/activities`);
+export const getActivityById = (id: string) => {
+  return fetcher.get(`${baseURL}/api/v1/activity/id`, {
+    params: { id }
+  });
 };

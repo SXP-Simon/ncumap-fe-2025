@@ -1,5 +1,5 @@
 import { fetcher, baseURL } from './api';
-import type { MapMarks } from '@/hooks/types';
+import type { MapMarks } from '@/types/map';
 
 /**
  * 获取校园地点标记数据

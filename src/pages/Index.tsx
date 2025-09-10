@@ -8,12 +8,12 @@ import {
   FloatingActionButtons,
 } from "@/components/ui";
 import { resolveLocationId } from "@/utils/location";
-import { getCampusManual } from "@/services/manual";
-import { getCampusActivities } from "@/services/activity";
-import { useFetchData } from "@/hooks/useFetchData";
+import { getFreshmenManual } from "@/services/manual";
+import { getAllActivities } from "@/services/activity";
+import { getCampusMarks } from "@/services/campus";
 import { toChatAI } from "@/utils/navigation";
 
-import type { MapMarks } from "@/hooks/types";
+import type { MapMarks } from "@/types/map";
 
 const Index: React.FC = () => {
   const mapRef = useRef<OpenMapRef | null>(null);
@@ -34,27 +34,25 @@ const Index: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [manualResponse, activitiesResponse] = await Promise.all([
-          getCampusManual(),
-          getCampusActivities(),
+        const [manualResponse, activitiesResponse, marksResponse] = await Promise.all([
+          getFreshmenManual(),
+          getAllActivities(),
+          getCampusMarks(),
         ]);
         setManualData(manualResponse.data);
         setActivitiesData(activitiesResponse.data);
+        const campusMarks = marksResponse.data;
+        if (campusMarks) {
+          const newCategories = ["全部", "活动", ...Object.keys(campusMarks)];
+          setMarks(campusMarks);
+          setCategories(newCategories);
+        }
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
     };
     fetchData();
   }, []);
-
-  const { campusMarks } = useFetchData();
-
-  useEffect(() => {
-    if (!campusMarks) return;
-    const newCategories = ["全部", "活动", ...Object.keys(campusMarks)];
-    setMarks(campusMarks);
-    setCategories(newCategories);
-  }, [campusMarks]);
 
   const showBottomSheet = (index: string) => {
     setCurrentCategory(Number(index));
@@ -147,6 +145,7 @@ const Index: React.FC = () => {
             ref={mapRef}
             x={location.x}
             y={location.y}
+            campusMarks={marks}
             onFeatureSelected={handleFeatureSelected}
           />
         </Suspense>

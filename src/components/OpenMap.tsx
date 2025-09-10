@@ -10,8 +10,7 @@ import { Select } from 'ol/interaction';
 import { click } from 'ol/events/condition';
 import { Projection } from 'ol/proj';
 import { mincu } from 'mincu-vanilla';
-import { useFetchData } from '@/hooks/useFetchData';
-import type { MapMarks, MapMark } from '@/hooks/types';
+import type { MapMarks, MapMark } from '@/types/map';
 
 interface GeolocationPosition {
   lng: number;
@@ -21,6 +20,7 @@ interface GeolocationPosition {
 interface OpenMapProps {
   x: number;
   y: number;
+  campusMarks: MapMarks | null;
   onFeatureSelected?: (locationId: string) => void;
 }
 
@@ -56,7 +56,7 @@ const convertCoordinates = (coordinates: number[]) => {
   return result;
 };
 
-const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected }, ref) => {
+const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, campusMarks, onFeatureSelected }, ref) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Map | null>(null);
   const viewRef = useRef<View | null>(null);
@@ -342,9 +342,6 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, onFeatureSelected 
       viewRef.current = null;
     };
   }, []);
-
-  // 使用 useFetchData 提供的 campusMarks（会从 API 或本地 data.json 加载）
-  const { campusMarks } = useFetchData();
 
   // 当 campusMarks 更新时，同步到内部 marks 并更新 categories/markers
   useEffect(() => {

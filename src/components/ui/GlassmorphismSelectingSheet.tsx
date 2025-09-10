@@ -10,7 +10,7 @@ import {
   Chip
 } from "@heroui/react";
 import { MapPinIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import type { UIListItem } from '@/hooks/types';
+import type { UIListItem } from '@/types/activity';
 
 interface GlassmorphismSelectingSheetProps {
   isOpen: boolean;
