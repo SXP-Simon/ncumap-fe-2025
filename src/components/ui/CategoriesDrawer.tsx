@@ -12,25 +12,41 @@ import {
 import { MapPinIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import type { UIListItem } from '@/types/activity';
 
-interface GlassmorphismSelectingSheetProps {
+export type DrawerType = 'location' | 'activity' | 'manual';
+
+const getEmptyMessage = (type: DrawerType, defaultMessage: string): string => {
+  switch (type) {
+    case 'location':
+      return '该分类下暂无地点';
+    case 'activity':
+      return '暂无活动数据';
+    case 'manual':
+      return '暂无手册数据';
+    default:
+      return defaultMessage;
+  }
+};
+
+interface CategoriesDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  // accept a generic list so sheet can render categories, activities or manual items
   buildings: UIListItem[];
   onBuildingSelect: (building: UIListItem, index: number) => void;
   selectedCategory: string;
   emptyMessage?: string;
+  type: DrawerType;
 }
 
-export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetProps> = ({
+export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
   isOpen,
   onClose,
   title,
   buildings,
   onBuildingSelect,
   selectedCategory,
-  emptyMessage = "该分类下暂无地点"
+  emptyMessage = "该分类下暂无地点",
+  type
 }) => {
   const [isClosing, setIsClosing] = useState(false);
   const [internalOpen, setInternalOpen] = useState(isOpen);
@@ -139,7 +155,9 @@ export const GlassmorphismSelectingSheet: React.FC<GlassmorphismSelectingSheetPr
                   <div className="glass-icon-container w-24 h-24 flex-center mb-6">
                     <MapPinIcon className="w-12 h-12 text-gray-400 drop-shadow-lg" />
                   </div>
-                  <p className="text-lg font-medium text-gray-600 drop-shadow-sm">{emptyMessage}</p>
+                  <p className="text-lg font-medium text-gray-600 drop-shadow-sm">
+                    {getEmptyMessage(type, emptyMessage)}
+                  </p>
                 </div>
               ) : (
                 <div className={`space-y-3 w-full transition-all duration-300 ${

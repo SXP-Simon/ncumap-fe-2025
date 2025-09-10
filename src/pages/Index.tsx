@@ -4,7 +4,7 @@ import OpenMap, { type OpenMapRef } from "@/components/OpenMap";
 import {
   NavigationTabs,
   SchoolCarModal,
-  GlassmorphismSelectingSheet,
+  CategoriesDrawer,
   FloatingActionButtons,
 } from "@/components/ui";
 import { resolveLocationId } from "@/utils/location";
@@ -22,9 +22,7 @@ const Index: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [currentCategory, setCurrentCategory] = useState(0);
   const [location] = useState({ x: 115.804362, y: 28.663298 });
-  const [isCategoriesSheetShow, setIsCategoriesSheetShow] = useState(false);
-  const [isManualShow, setIsManualShow] = useState(false);
-  const [isActivitiesSheetShow, setIsActivitiesSheetShow] = useState(false);
+  const [drawerType, setDrawerType] = useState<'location' | 'activity' | 'manual' | null>(null);
   const [schoolCarDialog, setSchoolCarDialog] = useState(false);
   const [schoolCarNumber, setSchoolCarNumber] = useState(0);
   const [manualData, setManualData] = useState<any>(null);
@@ -34,11 +32,12 @@ const Index: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [manualResponse, activitiesResponse, marksResponse] = await Promise.all([
-          getFreshmenManual(),
-          getAllActivities(),
-          getCampusMarks(),
-        ]);
+        const [manualResponse, activitiesResponse, marksResponse] =
+          await Promise.all([
+            getFreshmenManual(),
+            getAllActivities(),
+            getCampusMarks(),
+          ]);
         setManualData(manualResponse.data);
         setActivitiesData(activitiesResponse.data);
         const campusMarks = marksResponse.data;
@@ -54,15 +53,55 @@ const Index: React.FC = () => {
     fetchData();
   }, []);
 
-  const showBottomSheet = (index: string) => {
-    setCurrentCategory(Number(index));
-    setIsCategoriesSheetShow(true);
+  const getDrawerTitle = (type: 'location' | 'activity' | 'manual' | null): string => {
+    switch (type) {
+      case 'location':
+        return '选择地点';
+      case 'activity':
+        return '校园活动';
+      case 'manual':
+        return '新生手册';
+      default:
+        return '';
+    }
   };
 
-  const showManual = () => setIsManualShow(true);
-  const toggleCategoriesSheet = (show: boolean) => setIsCategoriesSheetShow(show);
-  const toggleManualSheet = (show: boolean) => setIsManualShow(show);
-  const toggleActivitiesSheet = (show: boolean) => setIsActivitiesSheetShow(show);
+  const getDrawerBuildings = (type: 'location' | 'activity' | 'manual' | null) => {
+    switch (type) {
+      case 'location':
+        return getCurrentMarks();
+      case 'activity':
+        return activities.length ? activities : [];
+      case 'manual':
+        return manualList;
+      default:
+        return [];
+    }
+  };
+
+  const getDrawerCategory = (type: 'location' | 'activity' | 'manual' | null): string => {
+    switch (type) {
+      case 'location':
+        return categories[currentCategory] || "全部";
+      case 'activity':
+        return "校园活动";
+      case 'manual':
+        return "新生手册";
+      default:
+        return "";
+    }
+  };
+
+  const toggleDrawer = (type: 'location' | 'activity' | 'manual' | null) => {
+    setDrawerType(type);
+  };
+
+  const showBottomSheet = (index: string) => {
+    setCurrentCategory(Number(index));
+    toggleDrawer('location');
+  };
+
+  const showManual = () => toggleDrawer('manual');
   const toggleSchoolCarDialog = (show: boolean) => setSchoolCarDialog(show);
 
   const getCurrentMarks = () => {
@@ -86,12 +125,29 @@ const Index: React.FC = () => {
     window.location.href = `/${locationId}`;
   };
 
-  const manualSelectOnly = (index: number, groupIndex: number) => {
-    if (manualData && manualData[groupIndex]) {
-      const item = manualData[groupIndex].items[index];
-      if (item && item.location_id) {
-        handleFeatureSelected(item.location_id);
-      }
+  const handleDrawerItemSelect = (type: 'location' | 'activity' | 'manual', building: any, index: number) => {
+    switch (type) {
+      case 'location':
+        const locationId = resolveLocationId(building, index);
+        mapViewToLocation(locationId);
+        toggleDrawer(null);
+        break;
+      case 'activity':
+        const activityId = resolveLocationId(building);
+        handleFeatureSelected(String(activityId));
+        toggleDrawer(null);
+        break;
+      case 'manual':
+        const buildingId = resolveLocationId(building);
+        const [gi, idx] = String(buildingId).split("-").map((v) => Number(v));
+        if (manualData && manualData[gi]) {
+          const item = manualData[gi].items[idx];
+          if (item && item.location_id) {
+            handleFeatureSelected(item.location_id);
+          }
+        }
+        toggleDrawer(null);
+        break;
     }
   };
 
@@ -127,9 +183,7 @@ const Index: React.FC = () => {
 
       <div
         className={`h-screen w-full transition-all duration-300 ${
-          isCategoriesSheetShow ||
-          isManualShow ||
-          isActivitiesSheetShow
+          drawerType !== null
             ? "h-1/2"
             : ""
         }`}
@@ -160,55 +214,17 @@ const Index: React.FC = () => {
         />
       )}
 
-      {isCategoriesSheetShow && (
-        <GlassmorphismSelectingSheet
-          isOpen={isCategoriesSheetShow}
-          onClose={() => toggleCategoriesSheet(false)}
-          title="选择地点"
-          buildings={getCurrentMarks()}
-          selectedCategory={categories[currentCategory] || "全部"}
-          onBuildingSelect={(building, index) => {
-            const locationId = resolveLocationId(building, index);
-            mapViewToLocation(locationId);
-            toggleCategoriesSheet(false);
-          }}
-          emptyMessage="该分类下暂无地点"
-        />
-      )}
-
-      {isActivitiesSheetShow && (
-        <GlassmorphismSelectingSheet
-          isOpen={isActivitiesSheetShow}
-          onClose={() => toggleActivitiesSheet(false)}
-          title="校园活动"
-          buildings={activities.length ? activities : []}
-          onBuildingSelect={(building) => {
-            toggleActivitiesSheet(false);
-            const buildingId = resolveLocationId(building);
-            handleFeatureSelected(String(buildingId));
-          }}
-          selectedCategory="校园活动"
-          emptyMessage="暂无活动数据"
-        />
-      )}
-
-      {isManualShow && manualData && (
-        <GlassmorphismSelectingSheet
-          isOpen={isManualShow}
-          onClose={() => toggleManualSheet(false)}
-          title="新生手册"
-          buildings={manualList}
-          onBuildingSelect={(building) => {
-            const buildingId = resolveLocationId(building);
-            const [gi, idx] = String(buildingId)
-              .split("-")
-              .map((v) => Number(v));
-            manualSelectOnly(idx, gi);
-          }}
-          selectedCategory="新生手册"
-          emptyMessage="暂无手册数据"
-        />
-      )}
+      <CategoriesDrawer
+        isOpen={drawerType !== null}
+        onClose={() => toggleDrawer(null)}
+        title={getDrawerTitle(drawerType)}
+        buildings={getDrawerBuildings(drawerType)}
+        selectedCategory={getDrawerCategory(drawerType)}
+        onBuildingSelect={(building, index) => 
+          drawerType && handleDrawerItemSelect(drawerType, building, index)
+        }
+        type={drawerType || 'location'}
+      />
 
       <SchoolCarModal
         isOpen={schoolCarDialog}
