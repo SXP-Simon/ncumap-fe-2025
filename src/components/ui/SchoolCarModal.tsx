@@ -13,18 +13,18 @@ export const SchoolCarModal: React.FC<SchoolCarModalProps> = ({
   isOpen,
   onClose,
   schoolCarNumber,
-  onSchoolCarNumberChange
+  onSchoolCarNumberChange,
 }) => {
   const currentNumber = Number(schoolCarNumber) || 0;
-  
+
   const handleImageClick = useCallback(() => {
     const newNumber = currentNumber === 0 ? 1 : 0;
     onSchoolCarNumberChange(newNumber.toString());
   }, [currentNumber, onSchoolCarNumberChange]);
 
   return (
-    <Modal 
-      isOpen={isOpen} 
+    <Modal
+      isOpen={isOpen}
       onOpenChange={(open) => !open && onClose()}
       size="sm"
       placement="center"
@@ -40,7 +40,7 @@ export const SchoolCarModal: React.FC<SchoolCarModalProps> = ({
                 </div>
                 <h2 className="text-base font-semibold text-gray-800">校车信息</h2>
               </div>
-              
+
               <Button isIconOnly size="sm" variant="light" onPress={onClose}>
                 <XMarkIcon className="w-4 h-4 text-gray-600" />
               </Button>
@@ -50,7 +50,7 @@ export const SchoolCarModal: React.FC<SchoolCarModalProps> = ({
               <div className="text-center space-y-3">
                 <div onClick={handleImageClick} className="cursor-pointer">
                   <img
-                    src={currentNumber === 0 ? "/schoolCar.svg" : "/schoolCar1.svg"}
+                    src={currentNumber === 0 ? '/schoolCar.svg' : '/schoolCar1.svg'}
                     alt="校车信息"
                     className="w-full rounded-lg"
                     onError={(e) => {

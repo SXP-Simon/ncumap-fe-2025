@@ -2,8 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Detail from './pages/Detail';
 import 'ol/ol.css';
-import {HeroUIProvider} from "@heroui/react";
-
+import { HeroUIProvider } from '@heroui/react';
 
 function App() {
   return (
@@ -18,4 +17,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@heroui/react";
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '@heroui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface NavigationTabsProps {
@@ -11,7 +11,7 @@ interface NavigationTabsProps {
 export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   categories,
   selectedIndex,
-  onSelectionChange
+  onSelectionChange,
 }) => {
   const [showLeftScroll, setShowLeftScroll] = useState(false);
   const [showRightScroll, setShowRightScroll] = useState(false);
@@ -22,9 +22,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     const container = scrollContainerRef.current;
     if (container) {
       setShowLeftScroll(container.scrollLeft > 0);
-      setShowRightScroll(
-        container.scrollLeft < container.scrollWidth - container.clientWidth
-      );
+      setShowRightScroll(container.scrollLeft < container.scrollWidth - container.clientWidth);
     }
   };
 
@@ -50,7 +48,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         selectedButton.scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
-          inline: 'center'
+          inline: 'center',
         });
       }
     }
@@ -74,17 +72,14 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         </div>
       )}
 
-      <div
-        ref={scrollContainerRef}
-        className="flex overflow-x-auto gap-2 px-4 py-2 touch-pan-x"
-      >
+      <div ref={scrollContainerRef} className="flex overflow-x-auto gap-2 px-4 py-2 touch-pan-x">
         {categories.map((category, index) => {
           const isSelected = selectedIndex === index;
           return (
             <Button
               key={category}
-              variant={isSelected ? "solid" : "light"}
-              color={isSelected ? "primary" : "default"}
+              variant={isSelected ? 'solid' : 'light'}
+              color={isSelected ? 'primary' : 'default'}
               size="sm"
               onPress={() => onSelectionChange(index)}
               className="whitespace-nowrap"

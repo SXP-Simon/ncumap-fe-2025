@@ -14,6 +14,6 @@ export const getAllActivities = () => {
  */
 export const getActivityById = (id: string) => {
   return fetcher.get<ActivityItem>(`${baseURL}/api/v1/activity/id`, {
-    params: { id }
+    params: { id },
   });
 };

@@ -1,0 +1,14 @@
+node_modules
+dist
+.vscode
+coverage
+public/tiles
+public/images
+pnpm-lock.yaml
+*.log
+**/*.svg
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.webp

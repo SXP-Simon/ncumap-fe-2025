@@ -1,5 +1,10 @@
-import { Button } from "@heroui/react";
-import { MapPinIcon, BookOpenIcon, TruckIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
+import { Button } from '@heroui/react';
+import {
+  MapPinIcon,
+  BookOpenIcon,
+  TruckIcon,
+  ChatBubbleLeftRightIcon,
+} from '@heroicons/react/24/outline';
 
 interface FloatingActionButtonsProps {
   onLocationClick: () => void;
@@ -12,33 +17,33 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
   onLocationClick,
   onManualClick,
   onSchoolCarClick,
-  onChatClick
+  onChatClick,
 }) => {
   const buttons = [
     {
       icon: MapPinIcon,
-      label: "定位",
+      label: '定位',
       onClick: onLocationClick,
-      color: "primary" as const
+      color: 'primary' as const,
     },
     {
       icon: BookOpenIcon,
-      label: "手册",
+      label: '手册',
       onClick: onManualClick,
-      color: "secondary" as const
+      color: 'secondary' as const,
     },
     {
       icon: TruckIcon,
-      label: "校车",
+      label: '校车',
       onClick: onSchoolCarClick,
-      color: "success" as const
+      color: 'success' as const,
     },
     {
       icon: ChatBubbleLeftRightIcon,
-      label: "问答",
+      label: '问答',
       onClick: onChatClick,
-      color: "warning" as const
-    }
+      color: 'warning' as const,
+    },
   ];
 
   return (

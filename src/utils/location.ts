@@ -5,10 +5,7 @@
  * - 直接传入字符串/数字 ID
  * - 手册数据扁平化后的对象
  */
-export function resolveLocationId(
-  item?: unknown,
-  fallbackIndex?: number
-): string {
+export function resolveLocationId(item?: unknown, fallbackIndex?: number): string {
   if (item == null) {
     return String(fallbackIndex ?? '');
   }

@@ -13,6 +13,6 @@ export const getCampusMarks = () => {
  */
 export const getLocationById = (locationId: string) => {
   return fetcher.get(`${baseURL}/api/v1/campus/locations/id`, {
-    params: { location_id: locationId }
+    params: { location_id: locationId },
   });
 };
