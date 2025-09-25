@@ -1,19 +1,14 @@
 // 活动相关类型定义
+// 精简为只保留实际 API 使用的字段
 export interface ActivityItem {
-  title?: string;
-  name?: string;
-  description?: string;
-  content?: string;
-  location_id?: string;
-  locationId?: string;
-  location?: string;
-  time?: string;
-  type?: string;
-  // optional fields that may appear in different API versions
-  id?: string | number;
-  coordinates?: [number, number];
-  priority?: number;
-  info?: string;
+  /** 活动唯一标识 */
+  id: string | number;
+  /** 活动名称 */
+  name: string;
+  /** 活动内容/描述 */
+  content: string;
+  /** 活动位置唯一标识 */
+  location_id: string;
 }
 
 export interface ActivitiesData {
@@ -25,19 +20,6 @@ export interface ActivityListItem {
   title: string;
   location_id: string | null;
   name?: string;
-  raw: ActivityItem | MapMark;
+  raw: ActivityItem
 }
 
-// Activity item extended for UI usage
-export interface ActivityUIItem extends ActivityListItem {
-  id: string | number;
-  info?: string;
-  coordinates?: [number, number];
-  priority?: number;
-  functions?: string[];
-}
-
-import type { MapMark } from './map';
-export type UIListItem = MapMark | ActivityUIItem | ManualListItem;
-
-import type { ManualListItem } from './manual';
