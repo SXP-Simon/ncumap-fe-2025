@@ -102,7 +102,7 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, campusMarks, onFea
   };
 
   const geoSuccess = (position: GeolocationPosition) => {
-    let [centerX, centerY] = convertCoordinates([position.lng, position.lat]);
+    const [centerX, centerY] = convertCoordinates([position.lng, position.lat]);
 
     if (isInSchool([centerX, centerY])) {
       geoLocationMark.current = [centerX, centerY];
@@ -318,18 +318,18 @@ const OpenMap = forwardRef<OpenMapRef, OpenMapProps>(({ x, y, campusMarks, onFea
   // 初始化 UI 行为（定位等）
   locate();
 
-    return () => {
+  return () => {
       // 清理交互与事件监听，销毁 map
       try {
         view.un('change:resolution', onResolutionChange);
         view.un('change:center', onCenterChange);
-      } catch (e) {
+      } catch {
         // ignore
       }
 
       try {
         map.removeInteraction(selectInteraction);
-      } catch (e) {
+      } catch {
         // ignore
       }
 

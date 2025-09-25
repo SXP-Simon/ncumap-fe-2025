@@ -10,9 +10,19 @@ import {
   Chip,
 } from "@heroui/react";
 import { MapPinIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import type { UIListItem } from "@/types/activity";
 
 export type DrawerType = "location" | "activity" | "manual";
+
+export interface DrawerItem {
+  id: string;
+  name: string;
+  description?: string;
+  locationId?: string;
+  functions?: string[];
+  categoryLabel?: string;
+  coordinates?: [number, number];
+  priority?: number;
+}
 
 const getEmptyMessage = (type: DrawerType, defaultMessage: string): string => {
   switch (type) {
@@ -31,8 +41,8 @@ interface CategoriesDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  buildings: UIListItem[];
-  onBuildingSelect: (building: UIListItem, index: number) => void;
+  items: DrawerItem[];
+  onSelect: (item: DrawerItem, index: number) => void;
   selectedCategory: string;
   emptyMessage?: string;
   type: DrawerType;
@@ -42,8 +52,8 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
   isOpen,
   onClose,
   title,
-  buildings,
-  onBuildingSelect,
+  items,
+  onSelect,
   selectedCategory,
   emptyMessage = "该分类下暂无地点",
   type,
@@ -54,52 +64,40 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
       placement="bottom"
       onOpenChange={(open) => !open && onClose()}
       size="lg"
-      hideCloseButton={true}
-      className="[&_[data-slot=backdrop]]:glass-modal-backdrop"
+      hideCloseButton
     >
-      <DrawerContent className="glass-base glass-container-lg max-h-[75vh] min-h-[50vh] rounded-t-2xl overflow-hidden">
-        <DrawerHeader className="flex items-center justify-between px-5 py-4 glass-header relative z-20">
-          <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <div className="glass-icon-container-lg flex-shrink-0">
-              <MapPinIcon className="w-5 h-5 text-blue-500 drop-shadow-lg" />
+      <DrawerContent className="max-h-[75vh] min-h-[40vh] rounded-t-2xl border-t bg-white">
+        <DrawerHeader className="flex items-center justify-between px-4 py-3 border-b">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50">
+              <MapPinIcon className="h-5 w-5 text-blue-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-bold text-gray-800 drop-shadow-lg truncate">
+              <h3 className="text-lg font-semibold text-gray-800 truncate">
                 {title}
               </h3>
-              <Chip
-                size="sm"
-                variant="flat"
-                className="glass-chip text-blue-600 mt-1"
-              >
+              <Chip size="sm" variant="flat" color="primary" className="mt-1">
                 {selectedCategory}
               </Chip>
             </div>
           </div>
 
-          <Button
-            isIconOnly
-            size="md"
-            variant="light"
-            onPress={onClose}
-            className="glass-button"
-          >
-            <XMarkIcon className="w-5 h-5 text-gray-600" />
+          <Button isIconOnly size="sm" variant="light" onPress={onClose}>
+            <XMarkIcon className="h-5 w-5 text-gray-600" />
           </Button>
         </DrawerHeader>
 
-        <DrawerBody className="flex-1 overflow-y-auto px-4 py-4 relative z-10 bg-white/2 backdrop-blur-xl max-h-[calc(75vh-10rem)]">
-          {buildings.length === 0 ? (
+        <DrawerBody className="flex-1 overflow-y-auto px-4 py-4 bg-white">
+          {items.length === 0 ? (
             <EmptyMessage type={type} emptyMessage={emptyMessage} />
           ) : (
-            <div className="space-y-3 w-full">
-              {buildings.map((building, index) => (
+            <div className="space-y-3">
+              {items.map((item, index) => (
                 <BuildingCard
-                  key={building.id || index}
-                  building={building}
-                  index={index}
+                  key={item.id || index}
+                  item={item}
                   onSelect={() => {
-                    onBuildingSelect(building, index);
+                    onSelect(item, index);
                     onClose();
                   }}
                 />
@@ -112,43 +110,29 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
   );
 };
 
-interface BuildingCardProps {
-  building: UIListItem;
-  index: number;
-  onSelect: () => void;
-}
-
-const BuildingCard = ({ building, onSelect }: BuildingCardProps) => {
+const BuildingCard = ({ item, onSelect }: { item: DrawerItem; onSelect: () => void }) => {
   return (
-    <Card
-      isPressable
-      onPress={onSelect}
-      className="glass-base glass-card group w-full"
-    >
-      <CardBody className="p-5 relative z-10">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <div className="glass-icon-container-sm flex-shrink-0">
-              <MapPinIcon className="w-4 h-4 text-blue-500" />
-            </div>
-
-            <div className="flex-1 min-w-0 space-y-2">
-              <h4 className="text-lg font-bold text-gray-800 truncate">
-                {building.name}
-              </h4>
-
-              {building.info && (
-                <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">
-                  {building.info}
-                </p>
-              )}
-
-              <BuildingFunctions functions={building.functions} />
-            </div>
+    <Card isPressable onPress={onSelect} className="w-full border">
+      <CardBody className="p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+            <MapPinIcon className="h-4 w-4" />
           </div>
-
-          <div className="glass-button-sm ml-4 flex-shrink-0">
-            <div className="w-2 h-2 bg-blue-500 rounded-full shadow-lg"></div>
+          <div className="flex-1 min-w-0 space-y-2">
+            <h4 className="text-base font-semibold text-gray-800 truncate">
+              {item.name}
+            </h4>
+            {item.description && (
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {item.description}
+              </p>
+            )}
+            <BuildingFunctions functions={item.functions} />
+            {item.categoryLabel && (
+              <Chip size="sm" variant="flat" color="default">
+                {item.categoryLabel}
+              </Chip>
+            )}
           </div>
         </div>
       </CardBody>
@@ -192,11 +176,11 @@ const EmptyMessage = ({
   emptyMessage: string;
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-20 glass-base glass-container relative overflow-hidden">
-      <div className="glass-icon-container w-24 h-24 flex-center mb-6">
-        <MapPinIcon className="w-12 h-12 text-gray-400 drop-shadow-lg" />
+    <div className="flex flex-col items-center justify-center py-12">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+        <MapPinIcon className="h-8 w-8 text-gray-400" />
       </div>
-      <p className="text-lg font-medium text-gray-600 drop-shadow-sm">
+      <p className="text-sm text-gray-600">
         {getEmptyMessage(type, emptyMessage)}
       </p>
     </div>

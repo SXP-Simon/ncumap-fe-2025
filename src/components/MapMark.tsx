@@ -41,7 +41,9 @@ const MapMark: React.FC<MapMarkProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onClick && onClick(id);
+    if (onClick) {
+      onClick(id);
+    }
   };
 
   const style: React.CSSProperties = {

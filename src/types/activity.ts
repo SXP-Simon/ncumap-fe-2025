@@ -11,15 +11,3 @@ export interface ActivityItem {
   location_id: string;
 }
 
-export interface ActivitiesData {
-  activities?: ActivityItem[];
-}
-
-// 活动列表项
-export interface ActivityListItem {
-  title: string;
-  location_id: string | null;
-  name?: string;
-  raw: ActivityItem
-}
-

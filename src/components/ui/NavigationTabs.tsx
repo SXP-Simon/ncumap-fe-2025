@@ -65,78 +65,43 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   };
 
   return (
-    <div className="w-full relative">
-      {/* 液体玻璃导航容器 */}
-      <div className="glass-base glass-container py-3 relative overflow-hidden">
-        {/* 玻璃光效层 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-white/8 via-transparent to-white/3"></div>
-        
-        {/* 左侧滚动按钮 */}
-        {showLeftScroll && (
-          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-30">
-            <Button
-              isIconOnly
-              variant="light"
-              size="sm"
-              onPress={scrollLeft}
-              className="glass-button-sm"
-            >
-              <ChevronLeftIcon className="w-4 h-4 text-gray-600" />
-            </Button>
-          </div>
-        )}
-
-        {/* 标签滚动容器 */}
-        <div
-          ref={scrollContainerRef}
-          className="flex overflow-x-auto gap-3 scrollbar-hide scroll-smooth px-2 sm:px-8 touch-pan-x"
-        >
-          {categories.map((category, index) => {
-            const isSelected = selectedIndex === index;
-            return (
-              <Button
-                key={category}
-                variant="light"
-                size="sm"
-                onPress={() => onSelectionChange(index)}
-                className={`
-                  relative min-w-fit px-4 py-2 font-medium text-sm whitespace-nowrap group
-                  ${isSelected 
-                    ? 'glass-nav-tab glass-nav-tab-active text-gray-800' 
-                    : 'glass-nav-tab text-gray-500 hover:text-gray-700'
-                  }
-                `}
-              >
-                {/* 选中状态的额外光效 */}
-                {isSelected && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20 rounded-xl pointer-events-none"></div>
-                )}
-                
-                {/* 文字内容 */}
-                <span className="relative z-10">
-                  {category}
-                </span>
-              </Button>
-            );
-          })}
+    <div className="w-full relative bg-white border-b">
+      {showLeftScroll && (
+        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
+          <Button isIconOnly size="sm" variant="light" onPress={scrollLeft}>
+            <ChevronLeftIcon className="h-4 w-4" />
+          </Button>
         </div>
+      )}
 
-        {/* 右侧滚动按钮 */}
-        {showRightScroll && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-30">
+      <div
+        ref={scrollContainerRef}
+        className="flex overflow-x-auto gap-2 px-4 py-2 touch-pan-x"
+      >
+        {categories.map((category, index) => {
+          const isSelected = selectedIndex === index;
+          return (
             <Button
-              isIconOnly
-              variant="light"
+              key={category}
+              variant={isSelected ? "solid" : "light"}
+              color={isSelected ? "primary" : "default"}
               size="sm"
-              onPress={scrollRight}
-              className="glass-button-sm"
+              onPress={() => onSelectionChange(index)}
+              className="whitespace-nowrap"
             >
-              <ChevronRightIcon className="w-4 h-4 text-gray-600" />
+              {category}
             </Button>
-          </div>
-        )}
+          );
+        })}
       </div>
+
+      {showRightScroll && (
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
+          <Button isIconOnly size="sm" variant="light" onPress={scrollRight}>
+            <ChevronRightIcon className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

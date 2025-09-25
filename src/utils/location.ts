@@ -1,24 +1,32 @@
-import type { MapMark } from '@/types/map';
-import type { ManualListItem } from '@/types/manual';
-import type { ActivityUIItem, UIListItem } from '@/types/activity';
-
 /**
  * 返回稳定的 location id（string）
- * 优先级：Manual.location_id -> Activity.id -> MapMark.locationId -> fallbackIndex
+ * 兼容以下数据类型：
+ * - API 返回的地点/活动对象（包含 location_id 或 id 字段）
+ * - 直接传入字符串/数字 ID
+ * - 手册数据扁平化后的对象
  */
-export function resolveLocationId(item?: UIListItem, fallbackIndex?: number): string {
-  if (!item) return String(fallbackIndex ?? '');
-
-  if ((item as ManualListItem).location_id) {
-    return String((item as ManualListItem).location_id);
+export function resolveLocationId(
+  item?: unknown,
+  fallbackIndex?: number
+): string {
+  if (item == null) {
+    return String(fallbackIndex ?? '');
   }
 
-  if ((item as ActivityUIItem).id != null) {
-    return String((item as ActivityUIItem).id);
+  if (typeof item === 'string' || typeof item === 'number') {
+    return String(item);
   }
 
-  if ((item as MapMark).locationId) {
-    return String((item as MapMark).locationId);
+  if (typeof item === 'object') {
+    const record = item as Record<string, unknown>;
+
+    if (record.location_id != null) {
+      return String(record.location_id);
+    }
+
+    if (record.id != null) {
+      return String(record.id);
+    }
   }
 
   return String(fallbackIndex ?? '');

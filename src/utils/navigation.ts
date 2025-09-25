@@ -12,7 +12,7 @@ export const openExternalUrl = (url: string) => {
       (mincu as any).openUrl(url);
       return;
     }
-  } catch (e) {
+  } catch {
     // ignore and fallback to window.open
   }
   

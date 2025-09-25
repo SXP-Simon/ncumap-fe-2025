@@ -68,8 +68,8 @@ function convertGcj02ToWgs84(longitudeGCJ: number, latitudeGCJ: number): Coordin
   const radianLatitude = (latitudeGCJ / 180.0) * PI;
 
   // 根据椭球体参数调整偏移
-  let sinLat = Math.sin(radianLatitude);
-  let magic = 1 - eccentricitySquared * sinLat * sinLat; // 临时变量，用于计算曲率
+  const sinLat = Math.sin(radianLatitude);
+  const magic = 1 - eccentricitySquared * sinLat * sinLat; // 临时变量，用于计算曲率
   const sqrtMagic = Math.sqrt(magic);
 
   const latitudeOffset = (deltaLatRaw * 180.0) / ((semiMajorAxis * (1 - eccentricitySquared)) / (magic * sqrtMagic) * PI);

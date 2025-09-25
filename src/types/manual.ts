@@ -28,8 +28,4 @@ export interface ManualListItem {
   priority: number;
   type: string;
   category: string;
-  /** 分组索引（内部UI使用） */
-  __groupIndex: number;
-  /** 组内项索引（内部UI使用） */
-  __itemIndex: number;
 }
