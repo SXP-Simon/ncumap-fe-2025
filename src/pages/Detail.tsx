@@ -1,13 +1,13 @@
 import { useState, useEffect, type FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Spinner, Card, CardBody } from '@heroui/react';
-import { 
-  ChevronLeftIcon, 
+import {
+  ChevronLeftIcon,
   ExclamationTriangleIcon,
   BuildingOfficeIcon,
   AcademicCapIcon,
   InformationCircleIcon,
-  PhotoIcon
+  PhotoIcon,
 } from '@heroicons/react/24/outline';
 import { getLocationById } from '@/services/campus';
 import { toChatAI } from '@/utils/navigation';
@@ -44,7 +44,7 @@ interface BuildingDetail {
 const Detail: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+
   const [building, setBuilding] = useState<BuildingDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,14 +53,14 @@ const Detail: FC = () => {
     if (!id) return;
 
     let mounted = true;
-    
+
     const fetchBuildingDetail = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         const response = await getLocationById(id);
-        
+
         if (mounted) {
           setBuilding(response.data);
         }
@@ -93,7 +93,7 @@ const Detail: FC = () => {
   if (error) {
     return (
       <div className="p-5">
-        <Button 
+        <Button
           variant="light"
           color="primary"
           startContent={<ChevronLeftIcon className="h-5 w-5 rounded-2xl" />}
@@ -118,7 +118,7 @@ const Detail: FC = () => {
   if (!building) {
     return (
       <div className="p-5">
-        <Button 
+        <Button
           variant="light"
           color="primary"
           startContent={<ChevronLeftIcon className="h-5 w-5 rounded-2xl" />}
@@ -141,8 +141,8 @@ const Detail: FC = () => {
 
   return (
     <div className="relative justify-center items-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-  <div className="absolute top-6 left-6 z-50 rounded-2xl">
-        <Button 
+      <div className="absolute top-6 left-6 z-50 rounded-2xl">
+        <Button
           isIconOnly
           variant="light"
           className="bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30  transition-all duration-300 rounded-xl"
@@ -156,26 +156,25 @@ const Detail: FC = () => {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${building.cover || '/map-cut.png'})`
+            backgroundImage: `url(${building.cover || '/map-cut.png'})`,
           }}
         />
 
         {/* 标题区域 - 玻璃质感容器，居中显示在底部 */}
         <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-6 px-4">
           <div className="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl">
-            <h1 className="text-white text-3xl font-bold mb-2 drop-shadow-lg">
-              {building.name}
-            </h1>
-            <p className="text-white/90 text-base leading-relaxed drop-shadow">
-              {building.info}
-            </p>
+            <h1 className="text-white text-3xl font-bold mb-2 drop-shadow-lg">{building.name}</h1>
+            <p className="text-white/90 text-base leading-relaxed drop-shadow">{building.info}</p>
           </div>
         </div>
       </div>
 
-  <div className="px-6 py-8 flex align-items-center flex-col gap-6 md:flex-row">
+      <div className="px-6 py-8 flex align-items-center flex-col gap-6 md:flex-row">
         {building.tips.info?.map((tip, index) => (
-          <Card key={index} className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
+          <Card
+            key={index}
+            className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 "
+          >
             <CardBody className="p-6 h-full">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100/80 rounded-xl">
@@ -185,7 +184,11 @@ const Detail: FC = () => {
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">{tip.title}</h3>
                   <div className="space-y-2">
                     {tip.content.map((content, idx) => (
-                      <div key={idx} className="text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: content }} />
+                      <div
+                        key={idx}
+                        className="text-gray-600 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: content }}
+                      />
                     ))}
                   </div>
                 </div>
@@ -202,7 +205,7 @@ const Detail: FC = () => {
               </div>
               <h2 className="text-xl font-bold text-gray-800">基本职能</h2>
             </div>
-            
+
             <div className="space-y-3">
               {building.functions && building.functions.length > 0 ? (
                 building.functions.map((func, index) => (
@@ -222,11 +225,18 @@ const Detail: FC = () => {
             </div>
 
             {building.tips.functions?.map((tip, index) => (
-              <div key={index} className="mt-6 p-4 bg-emerald-50/80 rounded-xl border border-emerald-100">
+              <div
+                key={index}
+                className="mt-6 p-4 bg-emerald-50/80 rounded-xl border border-emerald-100"
+              >
                 <h4 className="font-semibold text-emerald-800 mb-2">{tip.title}</h4>
                 <div className="space-y-2">
                   {tip.content.map((content, idx) => (
-                    <div key={idx} className="text-emerald-700 text-sm" dangerouslySetInnerHTML={{ __html: content }} />
+                    <div
+                      key={idx}
+                      className="text-emerald-700 text-sm"
+                      dangerouslySetInnerHTML={{ __html: content }}
+                    />
                   ))}
                 </div>
               </div>
@@ -242,7 +252,7 @@ const Detail: FC = () => {
               </div>
               <h2 className="text-xl font-bold text-gray-800">学院办公点</h2>
             </div>
-            
+
             <div className="space-y-3">
               {building.offices && building.offices.length > 0 ? (
                 building.offices.map((office, index) => (
@@ -262,11 +272,18 @@ const Detail: FC = () => {
             </div>
 
             {building.tips.offices?.map((tip, index) => (
-              <div key={index} className="mt-6 p-4 bg-purple-50/80 rounded-xl border border-purple-100">
+              <div
+                key={index}
+                className="mt-6 p-4 bg-purple-50/80 rounded-xl border border-purple-100"
+              >
                 <h4 className="font-semibold text-purple-800 mb-2">{tip.title}</h4>
                 <div className="space-y-2">
                   {tip.content.map((content, idx) => (
-                    <div key={idx} className="text-purple-700 text-sm" dangerouslySetInnerHTML={{ __html: content }} />
+                    <div
+                      key={idx}
+                      className="text-purple-700 text-sm"
+                      dangerouslySetInnerHTML={{ __html: content }}
+                    />
                   ))}
                 </div>
               </div>
@@ -282,7 +299,7 @@ const Detail: FC = () => {
               </div>
               <h2 className="text-xl font-bold text-gray-800">其他信息</h2>
             </div>
-            
+
             <div className="space-y-3">
               {building.activities && building.activities.length > 0 ? (
                 building.activities.map((activity, index) => (
@@ -302,11 +319,18 @@ const Detail: FC = () => {
             </div>
 
             {building.tips.activities?.map((tip, index) => (
-              <div key={index} className="mt-6 p-4 bg-orange-50/80 rounded-xl border border-orange-100">
+              <div
+                key={index}
+                className="mt-6 p-4 bg-orange-50/80 rounded-xl border border-orange-100"
+              >
                 <h4 className="font-semibold text-orange-800 mb-2">{tip.title}</h4>
                 <div className="space-y-2">
                   {tip.content.map((content, idx) => (
-                    <div key={idx} className="text-orange-700 text-sm" dangerouslySetInnerHTML={{ __html: content }} />
+                    <div
+                      key={idx}
+                      className="text-orange-700 text-sm"
+                      dangerouslySetInnerHTML={{ __html: content }}
+                    />
                   ))}
                 </div>
               </div>
@@ -323,10 +347,13 @@ const Detail: FC = () => {
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">实景图片</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {building.imgs.map((img, index) => (
-                  <div key={index} className="relative group overflow-hidden rounded-xl bg-gray-100">
+                  <div
+                    key={index}
+                    className="relative group overflow-hidden rounded-xl bg-gray-100"
+                  >
                     <img
                       src={img}
                       alt={`${building.name} 图片 ${index + 1}`}

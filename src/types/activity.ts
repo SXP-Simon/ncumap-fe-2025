@@ -10,4 +10,3 @@ export interface ActivityItem {
   /** 活动位置唯一标识 */
   location_id: string;
 }
-

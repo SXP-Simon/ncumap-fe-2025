@@ -15,7 +15,7 @@ export const openExternalUrl = (url: string) => {
   } catch {
     // ignore and fallback to window.open
   }
-  
+
   // Fallback for web: open in new tab
   if (typeof window !== 'undefined' && window.open) {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -26,5 +26,5 @@ export const openExternalUrl = (url: string) => {
  * 跳转到漫游指北页面
  */
 export const toChatAI = () => {
-  openExternalUrl("https://aiguide.ncuos.com/welcome");
+  openExternalUrl('https://aiguide.ncuos.com/welcome');
 };

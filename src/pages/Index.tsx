@@ -1,26 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import OpenMap, { type OpenMapRef } from "@/components/OpenMap";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import OpenMap, { type OpenMapRef } from '@/components/OpenMap';
 import {
   NavigationTabs,
   SchoolCarModal,
   CategoriesDrawer,
   FloatingActionButtons,
-} from "@/components/ui";
-import { getFreshmenManual } from "@/services/manual";
-import { getAllActivities } from "@/services/activity";
-import { getCampusMarks } from "@/services/campus";
-import { toChatAI } from "@/utils/navigation";
+} from '@/components/ui';
+import { getFreshmenManual } from '@/services/manual';
+import { getAllActivities } from '@/services/activity';
+import { getCampusMarks } from '@/services/campus';
+import { toChatAI } from '@/utils/navigation';
 
-import type { MapMark, MapMarks } from "@/types/map";
-import type { ManualData, ManualListItem } from "@/types/manual";
-import type { ActivityItem } from "@/types/activity";
-import type { DrawerItem, DrawerType } from "@/components/ui/CategoriesDrawer";
+import type { MapMark, MapMarks } from '@/types/map';
+import type { ManualData, ManualListItem } from '@/types/manual';
+import type { ActivityItem } from '@/types/activity';
+import type { DrawerItem, DrawerType } from '@/components/ui/CategoriesDrawer';
 
 const Index: React.FC = () => {
   const mapRef = useRef<OpenMapRef | null>(null);
 
   const [marks, setMarks] = useState<MapMarks>({});
-  const [categories, setCategories] = useState<string[]>(["全部", "活动"]);
+  const [categories, setCategories] = useState<string[]>(['全部', '活动']);
   const [currentCategory, setCurrentCategory] = useState(0);
   const [location] = useState({ x: 115.804362, y: 28.663298 });
   const [drawerType, setDrawerType] = useState<DrawerType | null>(null);
@@ -32,16 +32,15 @@ const Index: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [manualResponse, activitiesResponse, marksResponse] =
-          await Promise.all([
-            getFreshmenManual(),
-            getAllActivities(),
-            getCampusMarks(),
-          ]);
+        const [manualResponse, activitiesResponse, marksResponse] = await Promise.all([
+          getFreshmenManual(),
+          getAllActivities(),
+          getCampusMarks(),
+        ]);
         const manualData: ManualData | undefined = manualResponse.data;
         const campusMarks = marksResponse.data;
         if (campusMarks) {
-          const newCategories = ["全部", "活动", ...Object.keys(campusMarks)];
+          const newCategories = ['全部', '活动', ...Object.keys(campusMarks)];
           setMarks(campusMarks);
           setCategories(newCategories);
         }
@@ -52,7 +51,7 @@ const Index: React.FC = () => {
           setActivities(activitiesResponse.data);
         }
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error('Failed to fetch data:', error);
       }
     };
     fetchData();
@@ -67,25 +66,27 @@ const Index: React.FC = () => {
     );
   };
 
-
   const getDrawerTitle = (type: DrawerType | null): string => {
     switch (type) {
-      case "location":
-        return "选择地点";
-      case "activity":
-        return "校园活动";
-      case "manual":
-        return "新生手册";
+      case 'location':
+        return '选择地点';
+      case 'activity':
+        return '校园活动';
+      case 'manual':
+        return '新生手册';
       default:
-        return "";
+        return '';
     }
   };
 
   const drawerItems: Record<DrawerType, DrawerItem[]> = useMemo(() => {
-    const currentCategoryLabel = categories[currentCategory] || "全部";
-    const currentMarks: MapMark[] = (!marks || Object.keys(marks).length === 0)
-      ? []
-      : (currentCategory === 0 ? Object.values(marks).flat() : (marks[currentCategoryLabel] || []));
+    const currentCategoryLabel = categories[currentCategory] || '全部';
+    const currentMarks: MapMark[] =
+      !marks || Object.keys(marks).length === 0
+        ? []
+        : currentCategory === 0
+          ? Object.values(marks).flat()
+          : marks[currentCategoryLabel] || [];
 
     const locationItems: DrawerItem[] = currentMarks.map((mark) => ({
       id: mark.location_id,
@@ -123,14 +124,14 @@ const Index: React.FC = () => {
 
   const getDrawerCategory = (type: DrawerType | null): string => {
     switch (type) {
-      case "location":
-        return categories[currentCategory] || "全部";
-      case "activity":
-        return "校园活动";
-      case "manual":
-        return "新生手册";
+      case 'location':
+        return categories[currentCategory] || '全部';
+      case 'activity':
+        return '校园活动';
+      case 'manual':
+        return '新生手册';
       default:
-        return "";
+        return '';
     }
   };
 
@@ -141,13 +142,11 @@ const Index: React.FC = () => {
   const showBottomSheet = (index: string) => {
     const categoryIndex = Number(index);
     setCurrentCategory(categoryIndex);
-    toggleDrawer(categoryIndex === 1 ? "activity" : "location");
+    toggleDrawer(categoryIndex === 1 ? 'activity' : 'location');
   };
 
-  const showManual = () => toggleDrawer("manual");
+  const showManual = () => toggleDrawer('manual');
   const toggleSchoolCarDialog = (show: boolean) => setSchoolCarDialog(show);
-
-  // getCurrentMarks 已在上方声明
 
   const mapViewToLocation = (item: DrawerItem) => {
     if (!item.locationId || !item.coordinates) return;
@@ -155,7 +154,7 @@ const Index: React.FC = () => {
     if (mapRef.current) {
       mapRef.current.viewTo(item.coordinates);
       if (item.priority) {
-        mapRef.current.zoomTo(Math.max(item.priority, 3));
+        mapRef.current.zoomTo(Math.max(item.priority, 1));
       }
     }
   };
@@ -166,17 +165,17 @@ const Index: React.FC = () => {
 
   const handleDrawerItemSelect = (type: DrawerType, item: DrawerItem) => {
     switch (type) {
-      case "location":
+      case 'location':
         mapViewToLocation(item);
         toggleDrawer(null);
         break;
-      case "activity":
+      case 'activity':
         if (item.id) {
           window.location.href = `/activities/${item.id}`;
         }
         toggleDrawer(null);
         break;
-      case "manual":
+      case 'manual':
         if (item.locationId) {
           mapViewToLocation(item);
         }
@@ -197,7 +196,7 @@ const Index: React.FC = () => {
 
       <div
         className={`h-screen w-full transition-all duration-300 ${
-          drawerType !== null ? "h-1/2" : ""
+          drawerType !== null ? 'h-1/2' : ''
         }`}
       >
         <OpenMap
@@ -223,16 +222,14 @@ const Index: React.FC = () => {
         items={drawerType ? drawerItems[drawerType] : []}
         selectedCategory={getDrawerCategory(drawerType)}
         onSelect={(item) => drawerType && handleDrawerItemSelect(drawerType, item)}
-        type={drawerType || "location"}
+        type={drawerType || 'location'}
       />
 
       <SchoolCarModal
         isOpen={schoolCarDialog}
         onClose={() => toggleSchoolCarDialog(false)}
         schoolCarNumber={schoolCarNumber.toString()}
-        onSchoolCarNumberChange={(value: string) =>
-          setSchoolCarNumber(Number(value) || 0)
-        }
+        onSchoolCarNumberChange={(value: string) => setSchoolCarNumber(Number(value) || 0)}
       />
     </div>
   );

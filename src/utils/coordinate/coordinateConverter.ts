@@ -23,10 +23,19 @@ const eccentricitySquared = 0.00669342162296594323;
  * @returns 纬度偏移量（单位：度的近似量，需要进一步按椭球体参数调整）
  */
 function calculateLatitudeDelta(deltaLng: number, deltaLat: number): number {
-  let value = -100.0 + 2.0 * deltaLng + 3.0 * deltaLat + 0.2 * deltaLat * deltaLat + 0.1 * deltaLng * deltaLat + 0.2 * Math.sqrt(Math.abs(deltaLng));
-  value += (20.0 * Math.sin(6.0 * deltaLng * PI) + 20.0 * Math.sin(2.0 * deltaLng * PI)) * 2.0 / 3.0;
-  value += (20.0 * Math.sin(deltaLat * PI) + 40.0 * Math.sin((deltaLat / 3.0) * PI)) * 2.0 / 3.0;
-  value += (160.0 * Math.sin((deltaLat / 12.0) * PI) + 320.0 * Math.sin((deltaLat * PI) / 30.0)) * 2.0 / 3.0;
+  let value =
+    -100.0 +
+    2.0 * deltaLng +
+    3.0 * deltaLat +
+    0.2 * deltaLat * deltaLat +
+    0.1 * deltaLng * deltaLat +
+    0.2 * Math.sqrt(Math.abs(deltaLng));
+  value +=
+    ((20.0 * Math.sin(6.0 * deltaLng * PI) + 20.0 * Math.sin(2.0 * deltaLng * PI)) * 2.0) / 3.0;
+  value += ((20.0 * Math.sin(deltaLat * PI) + 40.0 * Math.sin((deltaLat / 3.0) * PI)) * 2.0) / 3.0;
+  value +=
+    ((160.0 * Math.sin((deltaLat / 12.0) * PI) + 320.0 * Math.sin((deltaLat * PI) / 30.0)) * 2.0) /
+    3.0;
   return value;
 }
 
@@ -37,10 +46,19 @@ function calculateLatitudeDelta(deltaLng: number, deltaLat: number): number {
  * @returns 经度偏移量（单位：度的近似量，需要进一步按椭球体参数调整）
  */
 function calculateLongitudeDelta(deltaLng: number, deltaLat: number): number {
-  let value = 300.0 + deltaLng + 2.0 * deltaLat + 0.1 * deltaLng * deltaLng + 0.1 * deltaLng * deltaLat + 0.1 * Math.sqrt(Math.abs(deltaLng));
-  value += (20.0 * Math.sin(6.0 * deltaLng * PI) + 20.0 * Math.sin(2.0 * deltaLng * PI)) * 2.0 / 3.0;
-  value += (20.0 * Math.sin(deltaLng * PI) + 40.0 * Math.sin((deltaLng / 3.0) * PI)) * 2.0 / 3.0;
-  value += (150.0 * Math.sin((deltaLng / 12.0) * PI) + 300.0 * Math.sin((deltaLng / 30.0) * PI)) * 2.0 / 3.0;
+  let value =
+    300.0 +
+    deltaLng +
+    2.0 * deltaLat +
+    0.1 * deltaLng * deltaLng +
+    0.1 * deltaLng * deltaLat +
+    0.1 * Math.sqrt(Math.abs(deltaLng));
+  value +=
+    ((20.0 * Math.sin(6.0 * deltaLng * PI) + 20.0 * Math.sin(2.0 * deltaLng * PI)) * 2.0) / 3.0;
+  value += ((20.0 * Math.sin(deltaLng * PI) + 40.0 * Math.sin((deltaLng / 3.0) * PI)) * 2.0) / 3.0;
+  value +=
+    ((150.0 * Math.sin((deltaLng / 12.0) * PI) + 300.0 * Math.sin((deltaLng / 30.0) * PI)) * 2.0) /
+    3.0;
   return value;
 }
 
@@ -72,8 +90,11 @@ function convertGcj02ToWgs84(longitudeGCJ: number, latitudeGCJ: number): Coordin
   const magic = 1 - eccentricitySquared * sinLat * sinLat; // 临时变量，用于计算曲率
   const sqrtMagic = Math.sqrt(magic);
 
-  const latitudeOffset = (deltaLatRaw * 180.0) / ((semiMajorAxis * (1 - eccentricitySquared)) / (magic * sqrtMagic) * PI);
-  const longitudeOffset = (deltaLngRaw * 180.0) / ((semiMajorAxis / sqrtMagic) * Math.cos(radianLatitude) * PI);
+  const latitudeOffset =
+    (deltaLatRaw * 180.0) /
+    (((semiMajorAxis * (1 - eccentricitySquared)) / (magic * sqrtMagic)) * PI);
+  const longitudeOffset =
+    (deltaLngRaw * 180.0) / ((semiMajorAxis / sqrtMagic) * Math.cos(radianLatitude) * PI);
 
   const longitudeWGS84 = longitudeGCJ - longitudeOffset;
   const latitudeWGS84 = latitudeGCJ - latitudeOffset;
