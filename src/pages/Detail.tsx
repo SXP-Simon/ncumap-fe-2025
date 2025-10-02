@@ -200,10 +200,13 @@ const Detail: FC = () => {
       </div>
 
       <div className="relative h-80 md:h-96 lg:h-[40vh] w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${building.cover || '/map-cut.png'})`,
+        <img
+          src={building.cover || '/map-cut.png'}
+          alt={building.name}
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={(e) => {
+            console.warn(`Image failed to load: ${building.cover}, using fallback`);
+            e.currentTarget.src = '/map-cut.png';
           }}
         />
 
