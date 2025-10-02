@@ -112,13 +112,13 @@ const Detail: FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 p-6">
         <Button
-          variant="light"
-          color="primary"
-          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          isIconOnly
+          variant="solid"
+          color="warning"
+          className="mb-6 w-12 h-12 bg-amber-300 hover:bg-amber-600 shadow-lg transition-all duration-300 rounded-3xl"
           onPress={() => navigate(-1)}
-          className="mb-6 bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all"
         >
-          返回
+          <ChevronLeftIcon className="h-6 w-6 text-white stroke-4" strokeWidth={2.5} />
         </Button>
         <div className="flex flex-col items-center justify-center mt-20">
           <div className="relative mb-8">
@@ -152,13 +152,13 @@ const Detail: FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 p-6">
         <Button
-          variant="light"
-          color="primary"
-          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          isIconOnly
+          variant="solid"
+          color="danger"
+          className="mb-6 w-12 h-12 bg-red-400 hover:bg-red-600 shadow-lg transition-all duration-300 rounded-3xl"
           onPress={() => navigate(-1)}
-          className="mb-6 bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all"
         >
-          返回
+          <ChevronLeftIcon className="h-6 w-6 text-white stroke-4" strokeWidth={2.5} />
         </Button>
         <div className="flex flex-col items-center justify-center mt-20">
           <div className="relative mb-8">
@@ -191,11 +191,12 @@ const Detail: FC = () => {
       <div className="absolute top-6 left-6 z-50 rounded-2xl">
         <Button
           isIconOnly
-          variant="light"
-          className="bg-white/20 backdrop-blur-xl border border-white/30 hover:bg-white/30  transition-all duration-300 rounded-xl"
+          variant="solid"
+          color="primary"
+          className="w-12 h-12 bg-blue-500 hover:bg-blue-600 shadow-lg transition-all duration-300 rounded-3xl"
           onPress={() => navigate(-1)}
         >
-          <ChevronLeftIcon className="h-5 w-5 text-gray-700 rounded-2xl" />
+          <ChevronLeftIcon className="h-6 w-6 text-white stroke-4" strokeWidth={2.5} />
         </Button>
       </div>
 
