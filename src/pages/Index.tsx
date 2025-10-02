@@ -21,7 +21,7 @@ const Index: React.FC = () => {
 
   const [marks, setMarks] = useState<MapMarks>({});
   const [categories, setCategories] = useState<string[]>(['全部', '活动']);
-  const [currentCategory, setCurrentCategory] = useState(0);
+  const [currentCategory, setCurrentCategory] = useState(-1);
   const [location] = useState({ x: 115.804362, y: 28.663298 });
   const [drawerType, setDrawerType] = useState<DrawerType | null>(null);
   const [schoolCarDialog, setSchoolCarDialog] = useState(false);
@@ -84,7 +84,7 @@ const Index: React.FC = () => {
     const currentMarks: MapMark[] =
       !marks || Object.keys(marks).length === 0
         ? []
-        : currentCategory === 0
+        : currentCategory === 0 || currentCategory === -1
           ? Object.values(marks).flat()
           : marks[currentCategoryLabel] || [];
 
@@ -137,6 +137,10 @@ const Index: React.FC = () => {
 
   const toggleDrawer = (type: DrawerType | null) => {
     setDrawerType(type);
+    // 关闭 Drawer 时重置选中状态
+    if (type === null) {
+      setCurrentCategory(-1);
+    }
   };
 
   const showBottomSheet = (index: string) => {
