@@ -45,11 +45,16 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
           return (
             <Button
               key={category}
-              variant={isSelected ? 'solid' : 'flat'}
-              color={isSelected ? 'primary' : 'default'}
+              variant="flat"
               size="sm"
               onPress={() => onSelectionChange(index)}
-              className={`whitespace-nowrap flex-shrink-0 transition-all rounded-xl ${isSelected ? 'shadow-lg' : ''}`}
+              className={`
+                whitespace-nowrap flex-shrink-0 transition-all rounded-xl
+                ${isSelected
+                  ? 'bg-blue-500/10 text-blue-600 shadow-md shadow-blue-500/25'
+                  : 'bg-transparent text-gray-400 hover:text-gray-600'
+                }
+              `}
             >
               {category}
             </Button>
