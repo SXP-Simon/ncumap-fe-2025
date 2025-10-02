@@ -24,25 +24,21 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
       icon: MapPinIcon,
       label: '定位',
       onClick: onLocationClick,
-      color: 'primary' as const,
     },
     {
       icon: BookOpenIcon,
       label: '手册',
       onClick: onManualClick,
-      color: 'secondary' as const,
     },
     {
       icon: TruckIcon,
       label: '校车',
       onClick: onSchoolCarClick,
-      color: 'success' as const,
     },
     {
       icon: ChatBubbleLeftRightIcon,
       label: '问答',
       onClick: onChatClick,
-      color: 'warning' as const,
     },
   ];
 
@@ -54,7 +50,6 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
           <div key={index} className="flex flex-col items-center gap-1">
             <Button
               isIconOnly
-              color={button.color}
               variant="flat"
               size="sm"
               onPress={button.onClick}
