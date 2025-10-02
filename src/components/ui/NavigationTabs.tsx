@@ -51,8 +51,8 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
               className={`
                 whitespace-nowrap flex-shrink-0 transition-all rounded-xl
                 ${isSelected
-                  ? 'bg-blue-500/10 text-blue-600 shadow-md shadow-blue-500/25'
-                  : 'bg-transparent text-gray-400 hover:text-gray-600'
+                  ? 'bg-blue-500/10 text-blue-600 font-bold shadow-md shadow-blue-500/25'
+                  : 'bg-transparent text-gray-400 font-bold hover:text-gray-600'
                 }
               `}
             >

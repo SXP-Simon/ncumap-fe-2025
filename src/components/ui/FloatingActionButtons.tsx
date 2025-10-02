@@ -53,7 +53,7 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
             />
           }
         >
-          <span className="text-xs text-blue-700">{button.label}</span>
+          <span className="text-xs text-gray-700 font-bold">{button.label}</span>
         </Button>
       ))}
     </div>
