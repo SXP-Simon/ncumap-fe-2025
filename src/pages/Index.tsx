@@ -185,7 +185,13 @@ const Index: React.FC = () => {
     if (mapRef.current) {
       mapRef.current.viewTo(item.coordinates);
       if (item.priority) {
-        mapRef.current.zoomTo(Math.max(item.priority, 1));
+        // 映射，使用更大的缩放级别，显示更多细节
+        // priority 通常是 1-6
+        const zoomLevel = Math.min(Math.max(item.priority + 1, 3), 6);
+        mapRef.current.zoomTo(zoomLevel);
+      } else {
+        // 如果没有 priority，使用默认的高缩放级别
+        mapRef.current.zoomTo(3);
       }
     }
   };
