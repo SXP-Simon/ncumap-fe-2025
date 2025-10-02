@@ -13,7 +13,8 @@
     "clean": "rimraf dist node_modules/.vite",
     "reinstall": "rimraf node_modules pnpm-lock.yaml && pnpm install",
     "format": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "format:fix": "prettier --write . --cache",
+    "format:staged": "prettier --write --cache"
   },
   "dependencies": {
     "@headlessui/react": "2.2.7",
