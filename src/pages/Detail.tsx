@@ -5,9 +5,8 @@ import {
   ChevronLeftIcon,
   ExclamationTriangleIcon,
   BuildingOfficeIcon,
-  AcademicCapIcon,
-  InformationCircleIcon,
   PhotoIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { getLocationById } from '@/services/campus';
 import { toChatAI } from '@/utils/navigation';
@@ -228,8 +227,8 @@ const Detail: FC = () => {
           >
             <CardBody className="p-6 h-full">
               <div className="flex items-start space-x-4">
-                <div className="p-3 bg-blue-100/80 rounded-xl">
-                  <InformationCircleIcon className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <img src="/icons/其他.svg" alt="信息" className="h-6 w-6" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">{tip.title}</h3>
@@ -250,27 +249,26 @@ const Detail: FC = () => {
 
         <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="p-3 bg-emerald-100/80 rounded-xl">
-                <BuildingOfficeIcon className="h-6 w-6 text-emerald-600" />
+            <div className="flex items-center space-x-4 mb-2">
+              <div className="p-3 bg-gray-50 rounded-xl">
+                <img src="/icons/基本职能.svg" alt="基本职能" className="h-6 w-6" />
               </div>
               <h2 className="text-xl font-bold text-gray-800">基本职能</h2>
             </div>
 
-            <div className="space-y-3">
+            <div>
               {building.functions && building.functions.length > 0 ? (
                 building.functions.map((func, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full flex-shrink-0" />
+                  <div key={index} className="py-1">
                     <p className="text-gray-700 leading-relaxed">{func}</p>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BuildingOfficeIcon className="h-8 w-8 text-gray-400" />
+                    <InformationCircleIcon className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-500">暂无职能信息</p>
+                  <p className="text-gray-400">暂无职能信息</p>
                 </div>
               )}
             </div>
@@ -278,14 +276,14 @@ const Detail: FC = () => {
             {building.tips.functions?.map((tip, index) => (
               <div
                 key={index}
-                className="mt-6 p-4 bg-emerald-50/80 rounded-xl border border-emerald-100"
+                className="mt-6 p-4 bg-gray-50 rounded-xl border border-blue-200"
               >
-                <h4 className="font-semibold text-emerald-800 mb-2">{tip.title}</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">{tip.title}</h4>
                 <div className="space-y-2">
                   {tip.content.map((content, idx) => (
                     <div
                       key={idx}
-                      className="text-emerald-700 text-sm"
+                      className="text-gray-700 text-sm"
                       dangerouslySetInnerHTML={{ __html: content }}
                     />
                   ))}
@@ -297,27 +295,26 @@ const Detail: FC = () => {
 
         <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="p-3 bg-purple-100/80 rounded-xl">
-                <AcademicCapIcon className="h-6 w-6 text-purple-600" />
+            <div className="flex items-center space-x-4 mb-2">
+              <div className="p-3 bg-gray-50 rounded-xl">
+                <img src="/icons/学院办公点.svg" alt="学院办公点" className="h-6 w-6" />
               </div>
               <h2 className="text-xl font-bold text-gray-800">学院办公点</h2>
             </div>
 
-            <div className="space-y-3">
+            <div>
               {building.offices && building.offices.length > 0 ? (
                 building.offices.map((office, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
+                  <div key={index} className="py-1">
                     <p className="text-gray-700 leading-relaxed">{office}</p>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <AcademicCapIcon className="h-8 w-8 text-gray-400" />
+                    <InformationCircleIcon className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-500">暂无办公点信息</p>
+                  <p className="text-gray-400">暂无办公点信息</p>
                 </div>
               )}
             </div>
@@ -325,14 +322,14 @@ const Detail: FC = () => {
             {building.tips.offices?.map((tip, index) => (
               <div
                 key={index}
-                className="mt-6 p-4 bg-purple-50/80 rounded-xl border border-purple-100"
+                className="mt-6 p-4 bg-gray-50 rounded-xl border border-blue-200"
               >
-                <h4 className="font-semibold text-purple-800 mb-2">{tip.title}</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">{tip.title}</h4>
                 <div className="space-y-2">
                   {tip.content.map((content, idx) => (
                     <div
                       key={idx}
-                      className="text-purple-700 text-sm"
+                      className="text-gray-700 text-sm"
                       dangerouslySetInnerHTML={{ __html: content }}
                     />
                   ))}
@@ -344,18 +341,17 @@ const Detail: FC = () => {
 
         <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="p-3 bg-orange-100/80 rounded-xl">
-                <InformationCircleIcon className="h-6 w-6 text-orange-600" />
+            <div className="flex items-center space-x-4 mb-2">
+              <div className="p-3 bg-gray-50 rounded-xl">
+                <img src="/icons/其他.svg" alt="其他信息" className="h-6 w-6" />
               </div>
               <h2 className="text-xl font-bold text-gray-800">其他信息</h2>
             </div>
 
-            <div className="space-y-3">
+            <div>
               {building.activities && building.activities.length > 0 ? (
                 building.activities.map((activity, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-orange-400 rounded-full flex-shrink-0" />
+                  <div key={index} className="py-1">
                     <p className="text-gray-700 leading-relaxed">{activity}</p>
                   </div>
                 ))
@@ -364,7 +360,7 @@ const Detail: FC = () => {
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <InformationCircleIcon className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-500">暂无其他信息</p>
+                  <p className="text-gray-400">暂无其他信息</p>
                 </div>
               )}
             </div>
@@ -372,14 +368,14 @@ const Detail: FC = () => {
             {building.tips.activities?.map((tip, index) => (
               <div
                 key={index}
-                className="mt-6 p-4 bg-orange-50/80 rounded-xl border border-orange-100"
+                className="mt-6 p-4 bg-gray-50 rounded-xl border border-blue-200"
               >
-                <h4 className="font-semibold text-orange-800 mb-2">{tip.title}</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">{tip.title}</h4>
                 <div className="space-y-2">
                   {tip.content.map((content, idx) => (
                     <div
                       key={idx}
-                      className="text-orange-700 text-sm"
+                      className="text-gray-700 text-sm"
                       dangerouslySetInnerHTML={{ __html: content }}
                     />
                   ))}
@@ -392,9 +388,9 @@ const Detail: FC = () => {
         {building.imgs && building.imgs.length > 0 && (
           <Card className="w-full max-w-3xl mx-auto md:w-[98%] lg:w-[64%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
             <CardBody className="p-6">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="p-3 bg-pink-100/80 rounded-xl">
-                  <PhotoIcon className="h-6 w-6 text-pink-600" />
+              <div className="flex items-center space-x-4 mb-2">
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <PhotoIcon className="h-6 w-6 text-blue-700" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">实景图片</h2>
               </div>
@@ -430,13 +426,14 @@ const Detail: FC = () => {
           </Card>
         )}
 
-        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 rounded-2xl">
-          <CardBody className="p-6 text-center">
-            <p className="text-gray-700 mb-4">想了解更多校园信息？</p>
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
+          <CardBody className="p-6 flex flex-col items-center justify-center h-full min-h-[120px]">
+            <p className="text-gray-700 mb-4 text-center">想了解更多校园信息？</p>
             <Button
               onPress={toChatAI}
-              variant="shadow"
-              className="bg-[#39C5BB] hover:bg-[#2fb3a8] text-white font-semibold transition-colors duration-300 rounded-2xl"
+              variant="solid"
+              color="primary"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold transition-colors duration-300 rounded-2xl"
             >
               进入漫游指北
             </Button>
