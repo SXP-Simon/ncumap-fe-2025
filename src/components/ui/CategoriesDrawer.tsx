@@ -66,11 +66,11 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
       size="lg"
       hideCloseButton
     >
-      <DrawerContent className="max-h-[75vh] min-h-[40vh] rounded-t-2xl border-t bg-white">
-        <DrawerHeader className="flex items-center justify-between px-4 py-3 border-b">
+      <DrawerContent className="max-h-[40vh] min-h-[30vh] rounded-t-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <DrawerHeader className="flex items-center justify-between px-4 py-3 bg-white/60 backdrop-blur-xl border-b border-white/20">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50">
-              <MapPinIcon className="h-5 w-5 text-blue-500" />
+            <div className="p-3 bg-gray-50 rounded-xl">
+              <MapPinIcon className="h-5 w-5 text-blue-700" />
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-gray-800 truncate">{title}</h3>
@@ -85,7 +85,7 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
           </Button>
         </DrawerHeader>
 
-        <DrawerBody className="flex-1 overflow-y-auto px-4 py-4 bg-white">
+        <DrawerBody className="flex-1 overflow-y-auto px-4 py-4">
           {items.length === 0 ? (
             <EmptyMessage type={type} emptyMessage={emptyMessage} />
           ) : (
@@ -110,11 +110,11 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
 
 const BuildingCard = ({ item, onSelect }: { item: DrawerItem; onSelect: () => void }) => {
   return (
-    <Card isPressable onPress={onSelect} className="w-full border">
+    <Card isPressable onPress={onSelect} className="w-full bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
       <CardBody className="p-4">
         <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-500">
-            <MapPinIcon className="h-4 w-4" />
+          <div className="p-3 bg-gray-50 rounded-xl">
+            <MapPinIcon className="h-4 w-4 text-blue-700" />
           </div>
           <div className="flex-1 min-w-0 space-y-2">
             <h4 className="text-base font-semibold text-gray-800 truncate">{item.name}</h4>
@@ -122,11 +122,6 @@ const BuildingCard = ({ item, onSelect }: { item: DrawerItem; onSelect: () => vo
               <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
             )}
             <BuildingFunctions functions={item.functions} />
-            {item.categoryLabel && (
-              <Chip size="sm" variant="flat" color="default">
-                {item.categoryLabel}
-              </Chip>
-            )}
           </div>
         </div>
       </CardBody>
@@ -138,14 +133,14 @@ const BuildingFunctions = ({ functions }: { functions?: string[] }) => {
   if (!functions || functions.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-2 pt-1">
+    <div className="flex flex-wrap gap-1 pt-1">
       {functions.slice(0, 4).map((func: string, idx: number) => (
-        <Chip key={idx} size="sm" variant="flat" className="glass-chip text-blue-600 flex-shrink-0">
+        <Chip key={idx} size="sm" variant="flat" color="primary" className="flex-shrink-0">
           {func}
         </Chip>
       ))}
       {functions.length > 4 && (
-        <Chip size="sm" variant="flat" className="glass-chip text-gray-500 flex-shrink-0">
+        <Chip size="sm" variant="flat" className="flex-shrink-0 text-gray-600">
           +{functions.length - 4}
         </Chip>
       )}
@@ -156,10 +151,10 @@ const BuildingFunctions = ({ functions }: { functions?: string[] }) => {
 const EmptyMessage = ({ type, emptyMessage }: { type: DrawerType; emptyMessage: string }) => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-        <MapPinIcon className="h-8 w-8 text-gray-400" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-default-100">
+        <MapPinIcon className="h-8 w-8 text-default-300" />
       </div>
-      <p className="text-sm text-gray-600">{getEmptyMessage(type, emptyMessage)}</p>
+      <p className="text-sm text-default-500">{getEmptyMessage(type, emptyMessage)}</p>
     </div>
   );
 };
