@@ -176,7 +176,10 @@ const Index: React.FC = () => {
     toggleDrawer(categoryIndex === 1 ? 'activity' : 'location');
   };
 
-  const showManual = () => toggleDrawer('manual');
+  const showManual = () => {
+    setCurrentCategory(0); // 设置为"全部"分类
+    toggleDrawer('manual');
+  };
   const toggleSchoolCarDialog = (show: boolean) => setSchoolCarDialog(show);
 
   const mapViewToLocation = (item: DrawerItem) => {
