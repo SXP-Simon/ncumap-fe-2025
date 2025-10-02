@@ -46,7 +46,7 @@ const Detail: FC = () => {
   const navigate = useNavigate();
 
   const [building, setBuilding] = useState<BuildingDetail | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -84,57 +84,95 @@ const Detail: FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center align-items-center h-screen">
-        <Spinner size="lg" color="primary" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-5">
-        <Button
-          variant="light"
-          color="primary"
-          startContent={<ChevronLeftIcon className="h-5 w-5 rounded-2xl" />}
-          onPress={() => navigate(-1)}
-          className="mb-5"
-        >
-          返回
-        </Button>
-        <Card className="border-danger-200 bg-danger-50">
-          <CardBody>
-            <div className="flex items-center">
-              <ExclamationTriangleIcon className="h-5 w-5 text-danger-500 mr-2" />
-              <h3 className="text-sm font-medium text-danger-800">加载失败</h3>
-            </div>
-            <p className="mt-2 text-sm text-danger-700">{error}</p>
-          </CardBody>
-        </Card>
+      <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="relative">
+          <div className="absolute inset-0 bg-primary-200/30 rounded-full blur-2xl animate-pulse" />
+          <Spinner size="lg" color="primary" className="relative z-10" />
+        </div>
+        <p className="mt-6 text-gray-600 font-medium animate-pulse">加载中...</p>
+        <div className="flex gap-2 mt-4">
+          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
       </div>
     );
   }
 
   if (!building) {
     return (
-      <div className="p-5">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 p-6">
         <Button
           variant="light"
           color="primary"
-          startContent={<ChevronLeftIcon className="h-5 w-5 rounded-2xl" />}
+          startContent={<ChevronLeftIcon className="h-5 w-5" />}
           onPress={() => navigate(-1)}
-          className="mb-5"
+          className="mb-6 bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all"
         >
           返回
         </Button>
-        <Card className="border-warning-200 bg-warning-50">
-          <CardBody>
-            <div className="flex items-center">
-              <ExclamationTriangleIcon className="h-5 w-5 text-warning-500 mr-2" />
-              <h3 className="text-sm font-medium text-warning-800">加载中...</h3>
+        <div className="flex flex-col items-center justify-center mt-20">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-warning-200/30 rounded-full blur-3xl animate-pulse" />
+            <div className="relative bg-white/80 backdrop-blur-xl rounded-full p-8 shadow-2xl border border-warning-100">
+              <BuildingOfficeIcon className="h-20 w-20 text-warning-500" />
             </div>
-          </CardBody>
-        </Card>
+          </div>
+          <Card className="max-w-md w-full bg-white/60 backdrop-blur-xl border border-warning-100 shadow-xl rounded-2xl">
+            <CardBody className="p-8 text-center">
+              <h3 className="text-2xl font-bold text-warning-800 mb-4">未找到建筑信息</h3>
+              <p className="text-warning-700 leading-relaxed mb-6">
+                抱歉，没有找到相关的建筑详情数据
+              </p>
+              <Button
+                color="warning"
+                variant="flat"
+                onPress={() => navigate(-1)}
+                className="w-full rounded-xl border-1 border-amber-200 text-warning-700"
+              >
+                返回上一页
+              </Button>
+            </CardBody>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 p-6">
+        <Button
+          variant="light"
+          color="primary"
+          startContent={<ChevronLeftIcon className="h-5 w-5" />}
+          onPress={() => navigate(-1)}
+          className="mb-6 bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all"
+        >
+          返回
+        </Button>
+        <div className="flex flex-col items-center justify-center mt-20">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-danger-200/30 rounded-full blur-3xl animate-pulse" />
+            <div className="relative bg-white/80 backdrop-blur-xl rounded-full p-8 shadow-2xl border border-danger-100">
+              <ExclamationTriangleIcon className="h-20 w-20 text-danger-500" />
+            </div>
+          </div>
+          <Card className="max-w-md w-full bg-white/60 backdrop-blur-xl border border-danger-100 shadow-xl rounded-2xl">
+            <CardBody className="p-8 text-center">
+              <h3 className="text-2xl font-bold text-danger-800 mb-4">加载失败</h3>
+              <p className="text-danger-700 leading-relaxed mb-6">{error}</p>
+              <Button
+                color="danger"
+                variant="flat"
+                onPress={() => window.location.reload()}
+                className="w-full rounded-xl border-1 border-danger-700 text-danger-700"
+              >
+                重新加载
+              </Button>
+            </CardBody>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -173,7 +211,7 @@ const Detail: FC = () => {
         {building.tips.info?.map((tip, index) => (
           <Card
             key={index}
-            className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 "
+            className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl"
           >
             <CardBody className="p-6 h-full">
               <div className="flex items-start space-x-4">
@@ -197,7 +235,7 @@ const Detail: FC = () => {
           </Card>
         ))}
 
-        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-emerald-100/80 rounded-xl">
@@ -244,7 +282,7 @@ const Detail: FC = () => {
           </CardBody>
         </Card>
 
-        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-purple-100/80 rounded-xl">
@@ -291,7 +329,7 @@ const Detail: FC = () => {
           </CardBody>
         </Card>
 
-        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 ">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6">
             <div className="flex items-center space-x-4 mb-6">
               <div className="p-3 bg-orange-100/80 rounded-xl">
@@ -339,7 +377,7 @@ const Detail: FC = () => {
         </Card>
 
         {building.imgs && building.imgs.length > 0 && (
-          <Card className="w-full max-w-3xl mx-auto md:w-[98%] lg:w-[64%] bg-white/60 backdrop-blur-xl border border-white/50 ">
+          <Card className="w-full max-w-3xl mx-auto md:w-[98%] lg:w-[64%] bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
             <CardBody className="p-6">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="p-3 bg-pink-100/80 rounded-xl">
@@ -379,7 +417,7 @@ const Detail: FC = () => {
           </Card>
         )}
 
-        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 ">
+        <Card className="w-full max-w-3xl mx-auto md:w-[48%] lg:w-[32%] bg-gradient-to-r from-[#39C5BB]/10 to-[#39C5BB]/20 backdrop-blur-xl border border-white/50 rounded-2xl">
           <CardBody className="p-6 text-center">
             <p className="text-gray-700 mb-4">想了解更多校园信息？</p>
             <Button
