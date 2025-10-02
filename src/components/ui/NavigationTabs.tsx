@@ -30,10 +30,10 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   }, [selectedIndex]);
 
   return (
-    <div className="w-full bg-gradient-to-r from-blue-50/80 via-white to-purple-50/80 backdrop-blur-sm shadow-sm">
+    <div className="w-full bg-white/40 backdrop-blur-xl border-b border-white/20">
       <div
         ref={scrollContainerRef}
-        className="flex overflow-x-auto gap-2 px-4 py-3 scrollbar-hide snap-x snap-mandatory"
+        className="flex overflow-x-auto gap-2 px-4 py-3 scrollbar-hide"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -49,10 +49,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
               color={isSelected ? 'primary' : 'default'}
               size="sm"
               onPress={() => onSelectionChange(index)}
-              className={`
-                whitespace-nowrap snap-start flex-shrink-0 transition-all duration-200 rounded-xl
-                ${isSelected ? 'shadow-md scale-105' : 'hover:scale-102'}
-              `}
+              className={`whitespace-nowrap flex-shrink-0 transition-all rounded-xl ${isSelected ? 'shadow-lg' : ''}`}
             >
               {category}
             </Button>
