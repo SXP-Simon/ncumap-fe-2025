@@ -21,7 +21,7 @@ const Index: React.FC = () => {
 
   const [marks, setMarks] = useState<MapMarks>({});
   const [categories, setCategories] = useState<string[]>(['全部', '活动']);
-  const [currentCategory, setCurrentCategory] = useState(-1);
+  const [currentCategory, setCurrentCategory] = useState(0);
   const [location] = useState({ x: 115.804362, y: 28.663298 });
   const [drawerType, setDrawerType] = useState<DrawerType | null>(null);
   const [schoolCarDialog, setSchoolCarDialog] = useState(false);
@@ -79,12 +79,43 @@ const Index: React.FC = () => {
     }
   };
 
+  // 根据当前选中分类过滤地图标记
+  const filteredMarks: MapMarks = useMemo(() => {
+    if (!marks || Object.keys(marks).length === 0) {
+      return {};
+    }
+
+    // 如果没有选中任何分类，显示所有标记
+    if (currentCategory === -1) {
+      return marks;
+    }
+
+    const currentCategoryLabel = categories[currentCategory];
+
+    // 如果选中"全部"，显示所有标记
+    if (currentCategory === 0 || currentCategoryLabel === '全部') {
+      return marks;
+    }
+
+    // 如果选中"活动"，不显示地图标记（活动有自己的处理逻辑）
+    if (currentCategory === 1 || currentCategoryLabel === '活动') {
+      return {};
+    }
+
+    // 如果选中具体分类，只显示该分类的标记
+    if (marks[currentCategoryLabel]) {
+      return { [currentCategoryLabel]: marks[currentCategoryLabel] };
+    }
+
+    return {};
+  }, [marks, currentCategory, categories]);
+
   const drawerItems: Record<DrawerType, DrawerItem[]> = useMemo(() => {
     const currentCategoryLabel = categories[currentCategory] || '全部';
     const currentMarks: MapMark[] =
       !marks || Object.keys(marks).length === 0
         ? []
-        : currentCategory === 0 || currentCategory === -1
+        : currentCategory === 0
           ? Object.values(marks).flat()
           : marks[currentCategoryLabel] || [];
 
@@ -137,10 +168,6 @@ const Index: React.FC = () => {
 
   const toggleDrawer = (type: DrawerType | null) => {
     setDrawerType(type);
-    // 关闭 Drawer 时重置选中状态
-    if (type === null) {
-      setCurrentCategory(-1);
-    }
   };
 
   const showBottomSheet = (index: string) => {
@@ -199,15 +226,14 @@ const Index: React.FC = () => {
       </div>
 
       <div
-        className={`h-screen w-full transition-all duration-300 ${
-          drawerType !== null ? 'h-1/2' : ''
-        }`}
+        className={`h-screen w-full transition-all duration-300 ${drawerType !== null ? 'h-1/2' : ''
+          }`}
       >
         <OpenMap
           ref={mapRef}
           x={location.x}
           y={location.y}
-          campusMarks={marks}
+          campusMarks={filteredMarks}
           onFeatureSelected={handleFeatureSelected}
         />
       </div>
