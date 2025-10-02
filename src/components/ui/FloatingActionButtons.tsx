@@ -1,10 +1,4 @@
 import { Button } from '@heroui/react';
-import {
-  MapPinIcon,
-  BookOpenIcon,
-  TruckIcon,
-  ChatBubbleLeftRightIcon,
-} from '@heroicons/react/24/outline';
 
 interface FloatingActionButtonsProps {
   onLocationClick: () => void;
@@ -21,22 +15,22 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
 }) => {
   const buttons = [
     {
-      icon: MapPinIcon,
+      icon: '/icons/定位.svg',
       label: '定位',
       onClick: onLocationClick,
     },
     {
-      icon: BookOpenIcon,
+      icon: '/icons/新生手册.svg',
       label: '手册',
       onClick: onManualClick,
     },
     {
-      icon: TruckIcon,
+      icon: '/icons/校车.svg',
       label: '校车',
       onClick: onSchoolCarClick,
     },
     {
-      icon: ChatBubbleLeftRightIcon,
+      icon: '/icons/问答.svg',
       label: '问答',
       onClick: onChatClick,
     },
@@ -44,23 +38,24 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
 
   return (
     <div className="fixed right-3 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-2">
-      {buttons.map((button, index) => {
-        const IconComponent = button.icon;
-        return (
-          <div key={index} className="flex flex-col items-center gap-1">
-            <Button
-              isIconOnly
-              variant="flat"
-              size="sm"
-              onPress={button.onClick}
-              aria-label={button.label}
-            >
-              <IconComponent className="h-4 w-4" />
-            </Button>
-            <span className="text-xs text-gray-700">{button.label}</span>
-          </div>
-        );
-      })}
+      {buttons.map((button, index) => (
+        <Button
+          key={index}
+          variant="flat"
+          size="sm"
+          onPress={button.onClick}
+          className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-0 w-auto bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl"
+          startContent={
+            <img
+              src={button.icon}
+              alt={button.label}
+              className="w-4 h-4"
+            />
+          }
+        >
+          <span className="text-xs text-blue-700">{button.label}</span>
+        </Button>
+      ))}
     </div>
   );
 };
