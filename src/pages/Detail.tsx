@@ -114,10 +114,10 @@ const Detail: FC = () => {
           isIconOnly
           variant="solid"
           color="warning"
-          className="mb-6 w-12 h-12 bg-amber-300 hover:bg-amber-600 shadow-lg transition-all duration-300 rounded-3xl"
+          className="mb-6 w-8 h-8 bg-amber-300 hover:bg-amber-600 shadow-lg transition-all duration-300 rounded-3xl"
           onPress={() => navigate(-1)}
         >
-          <ChevronLeftIcon className="h-6 w-6 text-white stroke-4" strokeWidth={2.5} />
+          <ChevronLeftIcon className="h-6 w-6 text-white stroke-3" strokeWidth={2.5} />
         </Button>
         <div className="flex flex-col items-center justify-center mt-20">
           <div className="relative mb-8">
@@ -154,10 +154,10 @@ const Detail: FC = () => {
           isIconOnly
           variant="solid"
           color="danger"
-          className="mb-6 w-12 h-12 bg-red-400 hover:bg-red-600 shadow-lg transition-all duration-300 rounded-3xl"
+          className="mb-6 w-8 h-8 bg-red-400 hover:bg-red-600 shadow-lg transition-all duration-300 rounded-3xl"
           onPress={() => navigate(-1)}
         >
-          <ChevronLeftIcon className="h-6 w-6 text-white stroke-4" strokeWidth={2.5} />
+          <ChevronLeftIcon className="h-6 w-6 text-white stroke-3" strokeWidth={2.5} />
         </Button>
         <div className="flex flex-col items-center justify-center mt-20">
           <div className="relative mb-8">
@@ -192,10 +192,10 @@ const Detail: FC = () => {
           isIconOnly
           variant="solid"
           color="primary"
-          className="w-12 h-12 bg-blue-500 hover:bg-blue-600 shadow-lg transition-all duration-300 rounded-3xl"
+          className="w-8 h-8 bg-blue-500 hover:bg-blue-600 shadow-lg transition-all duration-300 rounded-3xl"
           onPress={() => navigate(-1)}
         >
-          <ChevronLeftIcon className="h-6 w-6 text-white stroke-4" strokeWidth={2.5} />
+          <ChevronLeftIcon className="h-6 w-6 text-white stroke-3" strokeWidth={2.5} />
         </Button>
       </div>
 
