@@ -7,18 +7,13 @@ import { mincu } from 'mincu-vanilla';
  */
 export const openExternalUrl = (url: string) => {
   try {
-    // 优先使用移动端的 mincu.openUrl
-    if (mincu && typeof (mincu as any).openUrl === 'function') {
+    if (mincu.isApp) {
       (mincu as any).openUrl(url);
       return;
     }
-  } catch {
-    // ignore and fallback to window.open
-  }
-
-  // Fallback for web: open in new tab
-  if (typeof window !== 'undefined' && window.open) {
     window.open(url, '_blank', 'noopener,noreferrer');
+  } catch {
+    console.error('无法打开外部链接');
   }
 };
 
