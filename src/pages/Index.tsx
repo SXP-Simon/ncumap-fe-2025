@@ -28,6 +28,7 @@ const Index: React.FC = () => {
   const [schoolCarNumber, setSchoolCarNumber] = useState(0);
   const [manualList, setManualList] = useState<ManualListItem[]>([]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,6 +169,10 @@ const Index: React.FC = () => {
 
   const toggleDrawer = (type: DrawerType | null) => {
     setDrawerType(type);
+    // 关闭 drawer 时清除选中状态
+    if (type === null) {
+      setSelectedItemId(null);
+    }
   };
 
   const showBottomSheet = (index: string) => {
@@ -204,23 +209,32 @@ const Index: React.FC = () => {
   };
 
   const handleDrawerItemSelect = (type: DrawerType, item: DrawerItem) => {
+    // 更新选中状态
+    setSelectedItemId(item.id);
+
     switch (type) {
       case 'location':
         mapViewToLocation(item);
-        toggleDrawer(null);
         break;
       case 'activity':
         if (item.id) {
           window.location.href = `/activities/${item.id}`;
         }
-        toggleDrawer(null);
         break;
       case 'manual':
         if (item.locationId) {
           mapViewToLocation(item);
         }
-        toggleDrawer(null);
         break;
+    }
+  };
+
+  const handleNavigateToDetail = (item: DrawerItem) => {
+    // 二次点击跳转到详情页
+    if (item.locationId) {
+      window.location.href = `/${item.locationId}`;
+    } else if (item.id) {
+      window.location.href = `/${item.id}`;
     }
   };
 
@@ -260,7 +274,9 @@ const Index: React.FC = () => {
         title={getDrawerTitle(drawerType)}
         items={drawerType ? drawerItems[drawerType] : []}
         selectedCategory={getDrawerCategory(drawerType)}
+        selectedItems={selectedItemId ? [selectedItemId] : []}
         onSelect={(item) => drawerType && handleDrawerItemSelect(drawerType, item)}
+        onNavigateToDetail={handleNavigateToDetail}
         type={drawerType || 'location'}
       />
 

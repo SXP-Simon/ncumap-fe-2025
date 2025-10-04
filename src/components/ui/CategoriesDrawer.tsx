@@ -24,6 +24,11 @@ export interface DrawerItem {
   priority?: number;
 }
 
+export interface SelectedItem {
+  id: string;
+  clickCount: number;
+}
+
 const getEmptyMessage = (type: DrawerType, defaultMessage: string): string => {
   switch (type) {
     case 'location':
@@ -43,9 +48,11 @@ interface CategoriesDrawerProps {
   title: string;
   items: DrawerItem[];
   onSelect: (item: DrawerItem, index: number) => void;
+  onNavigateToDetail?: (item: DrawerItem) => void;
   selectedCategory: string;
   emptyMessage?: string;
   type: DrawerType;
+  selectedItems?: string[]; // 已选中的建筑 ID 列表
 }
 
 export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
@@ -54,10 +61,28 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
   title,
   items,
   onSelect,
+  onNavigateToDetail,
   selectedCategory,
   emptyMessage = '该分类下暂无地点',
   type,
+  selectedItems = [],
 }) => {
+  const handleItemClick = (item: DrawerItem, index: number) => {
+    const isCurrentlySelected = selectedItems.includes(item.id);
+
+    if (isCurrentlySelected) {
+      // 如果已经选中，第二次点击跳转到详情页
+      if (onNavigateToDetail) {
+        onNavigateToDetail(item);
+      }
+    } else {
+      // 如果未选中，第一次点击选中并定位
+      onSelect(item, index);
+    }
+  };
+
+
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -94,10 +119,8 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
                 <BuildingCard
                   key={item.id || index}
                   item={item}
-                  onSelect={() => {
-                    onSelect(item, index);
-                    onClose();
-                  }}
+                  isSelected={selectedItems.includes(item.id)}
+                  onSelect={() => handleItemClick(item, index)}
                 />
               ))}
             </div>
@@ -108,16 +131,47 @@ export const CategoriesDrawer: React.FC<CategoriesDrawerProps> = ({
   );
 };
 
-const BuildingCard = ({ item, onSelect }: { item: DrawerItem; onSelect: () => void }) => {
+const BuildingCard = ({
+  item,
+  isSelected,
+  onSelect,
+}: {
+  item: DrawerItem;
+  isSelected: boolean;
+  onSelect: () => void;
+}) => {
   return (
-    <Card isPressable onPress={onSelect} className="w-full bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl">
+    <Card
+      isPressable
+      onPress={onSelect}
+      className={`w-full backdrop-blur-xl border rounded-2xl transition-all ${isSelected
+        ? 'bg-blue-100/80 border-blue-400/70 shadow-md'
+        : 'bg-white/60 border-white/50'
+        }`}
+    >
       <CardBody className="p-4">
         <div className="flex items-start gap-3">
-          <div className="p-3 bg-gray-50 rounded-xl">
-            <MapPinIcon className="h-4 w-4 text-blue-700" />
+          <div
+            className={`p-3 rounded-xl transition-colors ${isSelected ? 'bg-blue-200' : 'bg-gray-50'
+              }`}
+          >
+            <MapPinIcon
+              className="h-4 w-4 text-blue-700"
+            />
           </div>
           <div className="flex-1 min-w-0 space-y-2">
-            <h4 className="text-base font-semibold text-gray-800 truncate">{item.name}</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="text-base font-semibold text-gray-800 truncate">{item.name}</h4>
+              {isSelected && (
+                <Chip
+                  size="sm"
+                  variant="flat"
+                  className="flex-shrink-0 text-blue-500 font-light text-xs"
+                >
+                  点击查看详情
+                </Chip>
+              )}
+            </div>
             {item.description && (
               <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
             )}
